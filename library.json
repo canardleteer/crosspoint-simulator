@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "license": "MIT",
   "build": {
-    "extraScript": "run_simulator.py"
+    "extraScript": "run_simulator.py",
+    "srcFilter": [
+      "+<*>",
+      "-<sim_grpc/gen/>"
+    ]
   }
 }

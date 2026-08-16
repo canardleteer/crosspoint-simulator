@@ -1,5 +1,9 @@
 #include "HalDisplay.h"
 
+#ifdef CROSSPOINT_SIM_GRPC
+#include "sim_grpc/session_client.h"
+#endif
+
 #include <GfxRenderer.h>
 #include <SDL.h>
 
@@ -472,6 +476,9 @@ void HalDisplay::presentIfNeeded() {
     captureDueScreenshots();
   }
   SDL_RenderPresent(sdl_renderer);
+#ifdef CROSSPOINT_SIM_GRPC
+  SimGrpc::bumpFramebufferGeneration();
+#endif
 }
 
 bool HalDisplay::shouldQuit() const { return quitRequested.load(); }
