@@ -6,6 +6,7 @@
 #include <SDL.h>
 
 #include <atomic>
+#include <cstdint>
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
@@ -236,7 +237,63 @@ void scheduleGrayscalePresent(const EInkDisplay &display) {
   pendingPresent.store(true);
 }
 
+#ifdef CROSSPOINT_SIM_GRPC
+void captureSessionSnapshotIfRequested() {
+  SimGrpc::SnapshotCaptureRequest req;
+  if (!SimGrpc::consumeSnapshotRequest(&req))
+    return;
+  if (req.format != 0) {
+    SimGrpc::finishSnapshotError(req.corr, "unknown_format");
+    return;
+  }
+
+  const uint32_t panelW =
+      static_cast<uint32_t>(BoardConfig::ACTIVE.displayWidth);
+  const uint32_t panelH =
+      static_cast<uint32_t>(BoardConfig::ACTIVE.displayHeight);
+  uint32_t x = 0;
+  uint32_t y = 0;
+  uint32_t w = panelW;
+  uint32_t h = panelH;
+  if (req.region) {
+    if (req.x >= panelW || req.y >= panelH || req.width == 0 ||
+        req.height == 0) {
+      SimGrpc::finishSnapshotError(req.corr, "empty_region");
+      return;
+    }
+    x = req.x;
+    y = req.y;
+    w = req.width;
+    h = req.height;
+    if (x + w > panelW)
+      w = panelW - x;
+    if (y + h > panelH)
+      h = panelH - y;
+    if (w == 0 || h == 0) {
+      SimGrpc::finishSnapshotError(req.corr, "empty_region");
+      return;
+    }
+  }
+
+  std::vector<uint8_t> gray(static_cast<size_t>(w) * h);
+  {
+    const std::lock_guard<std::mutex> lock(pixelBufMutex);
+    for (uint32_t row = 0; row < h; ++row) {
+      for (uint32_t col = 0; col < w; ++col) {
+        const uint32_t argb = pixelBuf[(y + row) * panelW + (x + col)];
+        gray[row * w + col] = static_cast<uint8_t>(argb & 0xFFu);
+      }
+    }
+  }
+  SimGrpc::finishSnapshotGray(req.corr, SimGrpc::framebufferGeneration(), w, h,
+                              std::move(gray));
+}
+#endif
+
 void presentIfNeeded() {
+#ifdef CROSSPOINT_SIM_GRPC
+  captureSessionSnapshotIfRequested();
+#endif
   const bool screenshotDue = hasDueScreenshot();
   if (!pendingPresent.exchange(false) && !screenshotDue)
     return;
@@ -288,6 +345,9 @@ void presentIfNeeded() {
     captureDueScreenshots();
   }
   SDL_RenderPresent(sdl_renderer);
+#ifdef CROSSPOINT_SIM_GRPC
+  SimGrpc::bumpFramebufferGeneration();
+#endif
 }
 
 void presentIfOnMainThread() {

@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <cctype>
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <string>
@@ -14,6 +15,10 @@
 
 #include "SimulatorDisplay.h"
 #include "SimulatorLifecycle.h"
+
+#ifdef CROSSPOINT_SIM_GRPC
+#include "sim_grpc/session_client.h"
+#endif
 
 extern GfxRenderer renderer;
 
@@ -52,12 +57,15 @@ enum class SyntheticAction {
   KeyDown,
   KeyUp,
   TouchDown,
+  TouchMove,
   TouchUp,
   HomeDown,
   HomeUp,
   Sleep,
   Quit
 };
+
+enum class EventSource { Script, Remote };
 
 struct SyntheticEvent {
   unsigned long atMs;
@@ -67,6 +75,7 @@ struct SyntheticEvent {
   float logicalNy = 0.0f;
   uint8_t contactId = 0;
   bool handled = false;
+  EventSource source = EventSource::Script;
 };
 
 std::vector<SyntheticEvent> syntheticEvents;
@@ -115,6 +124,106 @@ void logicalToPanelNormalized(float logicalNx, float logicalNy, float &panelNx,
 }
 
 InputManager &input() { return *g_input; }
+
+#ifdef CROSSPOINT_SIM_GRPC
+void panelPixelsToLogical(uint32_t panelX, uint32_t panelY, float &logicalNx,
+                          float &logicalNy) {
+  const int maxX = std::max(0, static_cast<int>(panelWidth()) - 1);
+  const int maxY = std::max(0, static_cast<int>(panelHeight()) - 1);
+  const int physicalX = std::min(
+      maxX, static_cast<int>(std::min(panelX, static_cast<uint32_t>(maxX))));
+  const int physicalY = std::min(
+      maxY, static_cast<int>(std::min(panelY, static_cast<uint32_t>(maxY))));
+  int lx = physicalX;
+  int ly = physicalY;
+  switch (renderer.getOrientation()) {
+  case GfxRenderer::Portrait:
+    lx = panelHeight() - 1 - physicalY;
+    ly = physicalX;
+    break;
+  case GfxRenderer::PortraitInverted:
+    lx = physicalY;
+    ly = panelWidth() - 1 - physicalX;
+    break;
+  case GfxRenderer::LandscapeClockwise:
+    lx = panelWidth() - 1 - physicalX;
+    ly = panelHeight() - 1 - physicalY;
+    break;
+  case GfxRenderer::LandscapeCounterClockwise:
+  default:
+    break;
+  }
+  const int logicalWidth = std::max(1, renderer.getScreenWidth() - 1);
+  const int logicalHeight = std::max(1, renderer.getScreenHeight() - 1);
+  logicalNx = clamp01(static_cast<float>(lx) / static_cast<float>(logicalWidth));
+  logicalNy =
+      clamp01(static_cast<float>(ly) / static_cast<float>(logicalHeight));
+}
+
+const char *buttonProtoName(int button) {
+  switch (button) {
+  case HalGPIO::BTN_BACK:
+    return "BACK";
+  case HalGPIO::BTN_CONFIRM:
+    return "ENTER";
+  case HalGPIO::BTN_LEFT:
+    return "LEFT";
+  case HalGPIO::BTN_RIGHT:
+    return "RIGHT";
+  case HalGPIO::BTN_UP:
+    return "UP";
+  case HalGPIO::BTN_DOWN:
+    return "DOWN";
+  case HalGPIO::BTN_POWER:
+    return "POWER";
+  default:
+    return "";
+  }
+}
+
+SimGrpc::ObservedSource observedSource(EventSource source) {
+  return source == EventSource::Remote ? SimGrpc::ObservedSource::Remote
+                                       : SimGrpc::ObservedSource::Script;
+}
+
+void observeKey(EventSource source, int button, bool down) {
+  const char *name = buttonProtoName(button);
+  if (name[0] == '\0')
+    return;
+  SimGrpc::enqueueKeyObserved(observedSource(source), name, down);
+}
+
+void observeTouchLogical(EventSource source, uint32_t kind, float logicalNx,
+                         float logicalNy) {
+  float panelNx = 0.0f;
+  float panelNy = 0.0f;
+  logicalToPanelNormalized(logicalNx, logicalNy, panelNx, panelNy);
+  SimGrpc::enqueueTouchObserved(observedSource(source), kind, panelNx, panelNy);
+}
+
+void observeHome(EventSource source, bool down) {
+  SimGrpc::enqueueHomeObserved(observedSource(source), down);
+}
+
+void observeHost(EventSource source, uint32_t kind) {
+  SimGrpc::enqueueHostObserved(observedSource(source), kind);
+}
+
+void observeHumanKey(int button, bool down) {
+  const char *name = buttonProtoName(button);
+  if (name[0] == '\0')
+    return;
+  SimGrpc::enqueueKeyObserved(SimGrpc::ObservedSource::Human, name, down);
+}
+
+void observeHumanTouchLogical(uint32_t kind, float logicalNx, float logicalNy) {
+  float panelNx = 0.0f;
+  float panelNy = 0.0f;
+  logicalToPanelNormalized(logicalNx, logicalNy, panelNx, panelNy);
+  SimGrpc::enqueueTouchObserved(SimGrpc::ObservedSource::Human, kind, panelNx,
+                                panelNy);
+}
+#endif
 
 void beginTouch(float logicalNx, float logicalNy, uint8_t contactId) {
   float panelNx = 0.0f;
@@ -287,8 +396,63 @@ void initializeSyntheticEvents() {
             });
 }
 
+#ifdef CROSSPOINT_SIM_GRPC
+void drainRemoteSyntheticEvents() {
+  std::vector<SimGrpc::RemoteEvent> remote;
+  SimGrpc::drainRemoteEvents(&remote);
+  if (remote.empty())
+    return;
+  const unsigned long now = millis();
+  for (const auto &ev : remote) {
+    SyntheticEvent event;
+    event.atMs = now + ev.delay_ms;
+    event.button = ev.button;
+    event.source = EventSource::Remote;
+    panelPixelsToLogical(ev.panel_x, ev.panel_y, event.logicalNx,
+                         event.logicalNy);
+    switch (ev.action) {
+    case SimGrpc::RemoteAction::KeyDown:
+      event.action = SyntheticAction::KeyDown;
+      break;
+    case SimGrpc::RemoteAction::KeyUp:
+      event.action = SyntheticAction::KeyUp;
+      break;
+    case SimGrpc::RemoteAction::TouchDown:
+      event.action = SyntheticAction::TouchDown;
+      break;
+    case SimGrpc::RemoteAction::TouchMove:
+      event.action = SyntheticAction::TouchMove;
+      break;
+    case SimGrpc::RemoteAction::TouchUp:
+      event.action = SyntheticAction::TouchUp;
+      break;
+    case SimGrpc::RemoteAction::HomeDown:
+      event.action = SyntheticAction::HomeDown;
+      break;
+    case SimGrpc::RemoteAction::HomeUp:
+      event.action = SyntheticAction::HomeUp;
+      break;
+    case SimGrpc::RemoteAction::Sleep:
+      event.action = SyntheticAction::Sleep;
+      break;
+    case SimGrpc::RemoteAction::Quit:
+      event.action = SyntheticAction::Quit;
+      break;
+    }
+    syntheticEvents.push_back(event);
+  }
+  std::sort(syntheticEvents.begin(), syntheticEvents.end(),
+            [](const SyntheticEvent &a, const SyntheticEvent &b) {
+              return a.atMs < b.atMs;
+            });
+}
+#endif
+
 void processSyntheticEvents() {
   initializeSyntheticEvents();
+#ifdef CROSSPOINT_SIM_GRPC
+  drainRemoteSyntheticEvents();
+#endif
   const unsigned long now = millis();
   for (auto &event : syntheticEvents) {
     if (event.handled || event.atMs > now)
@@ -300,27 +464,57 @@ void processSyntheticEvents() {
       // synthetic presses must use the same clock origin to avoid unsigned
       // underflow being mistaken for an immediate long press.
       input().pressButton(static_cast<uint8_t>(event.button), SDL_GetTicks());
+#ifdef CROSSPOINT_SIM_GRPC
+      observeKey(event.source, event.button, true);
+#endif
       break;
     case SyntheticAction::KeyUp:
       input().releaseButton(static_cast<uint8_t>(event.button));
+#ifdef CROSSPOINT_SIM_GRPC
+      observeKey(event.source, event.button, false);
+#endif
       break;
     case SyntheticAction::TouchDown:
       beginTouch(event.logicalNx, event.logicalNy, event.contactId);
+#ifdef CROSSPOINT_SIM_GRPC
+      observeTouchLogical(event.source, 0, event.logicalNx, event.logicalNy);
+#endif
+      break;
+    case SyntheticAction::TouchMove:
+      moveTouch(event.logicalNx, event.logicalNy, event.contactId);
+#ifdef CROSSPOINT_SIM_GRPC
+      observeTouchLogical(event.source, 1, event.logicalNx, event.logicalNy);
+#endif
       break;
     case SyntheticAction::TouchUp:
       endTouch(event.logicalNx, event.logicalNy, event.contactId);
+#ifdef CROSSPOINT_SIM_GRPC
+      observeTouchLogical(event.source, 2, event.logicalNx, event.logicalNy);
+#endif
       break;
     case SyntheticAction::HomeDown:
       input().beginHomeKey(SDL_GetTicks());
+#ifdef CROSSPOINT_SIM_GRPC
+      observeHome(event.source, true);
+#endif
       break;
     case SyntheticAction::HomeUp:
       input().endHomeKey(SDL_GetTicks());
+#ifdef CROSSPOINT_SIM_GRPC
+      observeHome(event.source, false);
+#endif
       break;
     case SyntheticAction::Sleep:
       requestSimulatorSleep();
+#ifdef CROSSPOINT_SIM_GRPC
+      observeHost(event.source, 0);
+#endif
       break;
     case SyntheticAction::Quit:
       SimulatorDisplay::requestQuit();
+#ifdef CROSSPOINT_SIM_GRPC
+      observeHost(event.source, 1);
+#endif
       break;
     }
   }
@@ -395,26 +589,46 @@ void HalGPIO::update() {
   while (SDL_PollEvent(&e) != 0) {
     if (e.type == SDL_QUIT) {
       SimulatorDisplay::requestQuit();
+#ifdef CROSSPOINT_SIM_GRPC
+      SimGrpc::enqueueHostObserved(SimGrpc::ObservedSource::Human, 1);
+#endif
     } else if (e.type == SDL_KEYDOWN && !e.key.repeat) {
       if (e.key.keysym.scancode == HOME_KEY_SCANCODE) {
         inputMgr.beginHomeKey(SDL_GetTicks());
+#ifdef CROSSPOINT_SIM_GRPC
+        SimGrpc::enqueueHomeObserved(SimGrpc::ObservedSource::Human, true);
+#endif
         continue;
       }
       if (e.key.keysym.scancode == SIMULATOR_SLEEP_SCANCODE) {
         requestSimulatorSleep();
+#ifdef CROSSPOINT_SIM_GRPC
+        SimGrpc::enqueueHostObserved(SimGrpc::ObservedSource::Human, 0);
+#endif
         continue;
       }
       int btn = scancodeToButton(e.key.keysym.scancode);
-      if (btn >= 0)
+      if (btn >= 0) {
         inputMgr.pressButton(static_cast<uint8_t>(btn), SDL_GetTicks());
+#ifdef CROSSPOINT_SIM_GRPC
+        observeHumanKey(btn, true);
+#endif
+      }
     } else if (e.type == SDL_KEYUP) {
       if (e.key.keysym.scancode == HOME_KEY_SCANCODE) {
         inputMgr.endHomeKey(SDL_GetTicks());
+#ifdef CROSSPOINT_SIM_GRPC
+        SimGrpc::enqueueHomeObserved(SimGrpc::ObservedSource::Human, false);
+#endif
         continue;
       }
       int btn = scancodeToButton(e.key.keysym.scancode);
-      if (btn >= 0)
+      if (btn >= 0) {
         inputMgr.releaseButton(static_cast<uint8_t>(btn));
+#ifdef CROSSPOINT_SIM_GRPC
+        observeHumanKey(btn, false);
+#endif
+      }
     } else if (e.type == SDL_MOUSEBUTTONDOWN &&
                e.button.button == SDL_BUTTON_LEFT) {
       mouseContactId = mouseChordContactId();
@@ -426,6 +640,9 @@ void HalGPIO::update() {
           static_cast<float>(e.button.y) /
           std::max(1, static_cast<int>(renderer.getScreenHeight()) - 1);
       beginTouch(logicalNx, logicalNy, mouseContactId);
+#ifdef CROSSPOINT_SIM_GRPC
+      observeHumanTouchLogical(0, logicalNx, logicalNy);
+#endif
     } else if (e.type == SDL_MOUSEMOTION && mouseDown) {
       const float logicalNx =
           static_cast<float>(e.motion.x) /
@@ -434,6 +651,9 @@ void HalGPIO::update() {
           static_cast<float>(e.motion.y) /
           std::max(1, static_cast<int>(renderer.getScreenHeight()) - 1);
       moveTouch(logicalNx, logicalNy, mouseContactId);
+#ifdef CROSSPOINT_SIM_GRPC
+      observeHumanTouchLogical(1, logicalNx, logicalNy);
+#endif
     } else if (e.type == SDL_MOUSEBUTTONUP &&
                e.button.button == SDL_BUTTON_LEFT) {
       const float logicalNx =
@@ -443,6 +663,9 @@ void HalGPIO::update() {
           static_cast<float>(e.button.y) /
           std::max(1, static_cast<int>(renderer.getScreenHeight()) - 1);
       endTouch(logicalNx, logicalNy, mouseContactId);
+#ifdef CROSSPOINT_SIM_GRPC
+      observeHumanTouchLogical(2, logicalNx, logicalNy);
+#endif
       mouseDown = false;
     }
   }

@@ -6,16 +6,27 @@
 #include "Print.h"
 #include "Stream.h"
 #include "WString.h"
+
+#ifdef CROSSPOINT_SIM_GRPC
+#include "sim_grpc/session_client.h"
+#endif
+
 class HWCDC : public Stream {
 public:
   void begin(unsigned long baud) {}
   void setTxTimeoutMs(uint32_t timeoutMs) {}
   size_t write(uint8_t c) override {
     std::cerr << (char)c;
+#ifdef CROSSPOINT_SIM_GRPC
+    SimGrpc::teeFirmwareBytes(&c, 1);
+#endif
     return 1;
   }
   size_t write(const uint8_t *buffer, size_t size) override {
     std::cerr.write((const char *)buffer, size);
+#ifdef CROSSPOINT_SIM_GRPC
+    SimGrpc::teeFirmwareBytes(buffer, size);
+#endif
     return size;
   }
   int available() override { return 0; }
