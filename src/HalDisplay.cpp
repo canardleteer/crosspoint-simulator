@@ -559,6 +559,8 @@ void HalDisplay::writeGrayscalePlaneStrip(bool lsbPlane, const uint8_t *rows,
 }
 bool HalDisplay::supportsStripGrayscale() const { return true; }
 
+bool HalDisplay::combinesGrayscaleBase() const { return false; }
+
 uint16_t HalDisplay::getDisplayWidth() const { return DISPLAY_WIDTH; }
 uint16_t HalDisplay::getDisplayHeight() const { return DISPLAY_HEIGHT; }
 uint16_t HalDisplay::getDisplayWidthBytes() const {
