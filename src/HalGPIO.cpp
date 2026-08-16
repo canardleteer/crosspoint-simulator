@@ -587,6 +587,11 @@ void HalGPIO::update() {
   // split between two callers (SimulatorDisplay::presentIfNeeded only renders).
   SDL_Event e;
   while (SDL_PollEvent(&e) != 0) {
+#ifdef CROSSPOINT_SIM_GRPC
+    if (SimGrpc::headless()) {
+      continue;
+    }
+#endif
     if (e.type == SDL_QUIT) {
       SimulatorDisplay::requestQuit();
 #ifdef CROSSPOINT_SIM_GRPC
@@ -781,6 +786,11 @@ void HalGPIO::startDeepSleep() {
 
     SDL_Event e;
     while (SDL_PollEvent(&e) != 0) {
+#ifdef CROSSPOINT_SIM_GRPC
+      if (SimGrpc::headless()) {
+        continue;
+      }
+#endif
       if (e.type == SDL_QUIT) {
         SimulatorDisplay::requestQuit();
         return;

@@ -65,6 +65,7 @@ std::atomic<uint64_t> gFrameGen{0};
 std::atomic<uint64_t> gSeq{1};
 std::atomic<uint64_t> gLogSeq{1};
 std::atomic<bool> gInjectEnabled{true};
+std::atomic<bool> gHeadless{false};
 std::thread gWorker;
 
 std::mutex gQueueMu;
@@ -141,10 +142,12 @@ std::string generateInstanceId() {
   return out;
 }
 
-bool envEnabled() {
-  const char *value = std::getenv("CROSSPOINT_SIM_GRPC");
+bool envFlag(const char *name) {
+  const char *value = std::getenv(name);
   return value && value[0] != '\0' && std::strcmp(value, "0") != 0;
 }
+
+bool envEnabled() { return envFlag("CROSSPOINT_SIM_GRPC"); }
 
 const char *envOrNull(const char *name) {
   const char *value = std::getenv(name);
@@ -305,7 +308,7 @@ SimToServer makeHeartbeat() {
   Heartbeat hb;
   hb.set_framebuffer_generation(gFrameGen.load());
   hb.set_inject_enabled(gInjectEnabled.load());
-  hb.set_headless(false);
+  hb.set_headless(gHeadless.load());
   SimToServer msg;
   msg.set_seq(gSeq.fetch_add(1));
   msg.mutable_heartbeat()->Swap(&hb);
@@ -720,10 +723,13 @@ bool parseArgs(int argc, char **argv, Options *out) {
     opts.instance_id = id;
   }
   bool enabled = envEnabled();
+  bool headless = envFlag("CROSSPOINT_SIM_HEADLESS");
   for (int i = 1; i < argc; ++i) {
     const std::string arg = argv[i];
     if (arg == "--sim-grpc") {
       enabled = true;
+    } else if (arg == "--sim-headless") {
+      headless = true;
     } else if (arg == "--sim-grpc-addr" && i + 1 < argc) {
       opts.addr = argv[++i];
     } else if (arg.rfind("--sim-grpc-addr=", 0) == 0) {
@@ -734,6 +740,7 @@ bool parseArgs(int argc, char **argv, Options *out) {
       opts.instance_id = arg.substr(std::strlen("--sim-instance-id="));
     }
   }
+  gHeadless.store(headless);
   if (!enabled) {
     return false;
   }
@@ -758,6 +765,8 @@ void join() {
 void bumpFramebufferGeneration() { gFrameGen.fetch_add(1); }
 
 uint64_t framebufferGeneration() { return gFrameGen.load(); }
+
+bool headless() { return gHeadless.load(); }
 
 void drainRemoteEvents(std::vector<RemoteEvent> *out) {
   if (!out) {

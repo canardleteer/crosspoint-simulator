@@ -62,6 +62,7 @@ void join();
 
 void bumpFramebufferGeneration();
 uint64_t framebufferGeneration();
+bool headless();
 
 // Drain accepted remote injects onto the synthetic-input path (SDL thread).
 void drainRemoteEvents(std::vector<RemoteEvent> *out);
