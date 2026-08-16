@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file is a README for agents: the extra build, architecture, and convention context that helps coding agents work in this repository.
 
 ## What this repo is
 
