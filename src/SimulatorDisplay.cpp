@@ -16,6 +16,10 @@
 
 #include "Arduino.h"
 
+#ifdef CROSSPOINT_SIM_GRPC
+#include "sim_grpc/session_client.h"
+#endif
+
 static SDL_Window *window = nullptr;
 static SDL_Renderer *sdl_renderer = nullptr;
 static SDL_Texture *texture = nullptr;

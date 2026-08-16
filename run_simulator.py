@@ -33,6 +33,11 @@ import os
 import builtins
 import re
 
+try:
+    _LIB_DIR = os.path.dirname(os.path.abspath(__file__))
+except NameError:
+    _LIB_DIR = os.getcwd()
+
 RUN_SIMULATOR_TARGET_KEY = "_crosspoint_run_simulator_target_registered"
 RUN_SIMULATOR_TARGET_OWNER_OPTION = "custom_run_simulator_target_owner"
 SIMULATOR_HTTP_PORT_OPTION = "custom_simulator_http_port"
@@ -155,3 +160,79 @@ if target_owner != "project" and not getattr(builtins, RUN_SIMULATOR_TARGET_KEY,
         description="Build and run the desktop simulator",
         always_build=True,
     )
+
+
+def _flag_list(value):
+    if value is None:
+        return []
+    if isinstance(value, str):
+        return [value]
+    return list(value)
+
+
+def _has_cpp_define(name):
+    for item in env.get("CPPDEFINES", []):
+        key = item[0] if isinstance(item, (list, tuple)) else item
+        if str(key) == name:
+            return True
+    for flag_key in ("CCFLAGS", "CXXFLAGS", "CPPFLAGS"):
+        for flag in env.get(flag_key, []):
+            text = str(flag)
+            if text == f"-D{name}" or text.startswith(f"-D{name}="):
+                return True
+    sources = []
+    try:
+        sources.extend(_flag_list(env.GetProjectOption("build_flags")))
+    except Exception:
+        pass
+    try:
+        from platformio.project.config import ProjectConfig
+
+        pioenv = env.get("PIOENV")
+        if pioenv:
+            sources.extend(
+                _flag_list(
+                    ProjectConfig.get_instance().get(
+                        f"env:{pioenv}", "build_flags"
+                    )
+                )
+            )
+    except Exception:
+        pass
+    return any(name in str(flag) for flag in sources)
+
+
+def _parse_grpc_pkgconfig(target_env):
+    try:
+        target_env.ParseConfig("pkg-config --cflags --libs grpc++ protobuf")
+    except Exception as exc:
+        print(
+            "[SIM] CROSSPOINT_SIM_GRPC is set but pkg-config grpc++ / protobuf "
+            "failed. Install libgrpc++-dev and libprotobuf-dev, or set "
+            "PKG_CONFIG_PATH to a working grpc++ prefix."
+        )
+        raise exc
+
+
+def _enable_session_client():
+    print("[SIM] compiling Session client (CROSSPOINT_SIM_GRPC)")
+    env.Append(CPPPATH=[os.path.join(_LIB_DIR, "src", "sim_grpc", "gen")])
+    _parse_grpc_pkgconfig(env)
+    env.BuildSources(
+        os.path.join("$BUILD_DIR", "sim_grpc"),
+        os.path.join(_LIB_DIR, "src", "sim_grpc", "gen"),
+    )
+    try:
+        Import("projenv")
+        _parse_grpc_pkgconfig(projenv)
+    except Exception:
+        try:
+            from SCons.Script import DefaultEnvironment
+
+            _parse_grpc_pkgconfig(DefaultEnvironment())
+        except Exception:
+            pass
+
+
+if _has_cpp_define("CROSSPOINT_SIM_GRPC"):
+    _enable_session_client()

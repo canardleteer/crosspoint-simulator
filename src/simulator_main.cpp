@@ -1,5 +1,6 @@
 
 #include <SDL.h>
+#include <cstdio>
 #include <unistd.h>
 
 #include "Arduino.h"
@@ -7,11 +8,29 @@
 #include "SimulatorDisplay.h"
 #include "SimulatorLifecycle.h"
 
+#ifdef CROSSPOINT_SIM_GRPC
+#include "sim_grpc/session_client.h"
+#endif
+
 extern void setup();
 extern void loop();
 
 int main(int argc, char **argv) {
   SimulatorLifecycle::initProcessArgs(argv);
+#ifdef CROSSPOINT_SIM_GRPC
+  SimGrpc::Options grpc_opts;
+  const bool grpc_enabled = SimGrpc::parseArgs(argc, argv, &grpc_opts);
+  if (grpc_enabled) {
+    if (!grpc_opts.instance_id.empty() &&
+        !SimGrpc::isValidInstanceId(grpc_opts.instance_id)) {
+      std::fprintf(stderr,
+                   "[SIM] --sim-instance-id / CROSSPOINT_SIM_INSTANCE_ID "
+                   "must be 1-64 bytes\n");
+      return 1;
+    }
+    SimGrpc::start(grpc_opts);
+  }
+#endif
   setup();
   while (!SimulatorDisplay::shouldQuit()) {
     // Clear input edge latches once per frame. update() may be called many
@@ -30,6 +49,12 @@ int main(int argc, char **argv) {
     // limited by FreeRTOS tick rate and e-ink refresh time).
     SDL_Delay(1);
   }
+#ifdef CROSSPOINT_SIM_GRPC
+  if (grpc_enabled) {
+    SimGrpc::requestStop();
+    SimGrpc::join();
+  }
+#endif
   SDL_Quit();
   // Use _exit() instead of return/exit() to bypass C++ global destructors.
   // `activityManager` (and other globals in main.cpp) are constructed before
