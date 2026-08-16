@@ -153,6 +153,58 @@ void captureDueScreenshots() {
   }
 }
 
+#ifdef CROSSPOINT_SIM_GRPC
+void captureSessionSnapshotIfRequested() {
+  SimGrpc::SnapshotCaptureRequest req;
+  if (!SimGrpc::consumeSnapshotRequest(&req))
+    return;
+  if (req.format != 0) {
+    SimGrpc::finishSnapshotError(req.corr, "unknown_format");
+    return;
+  }
+
+  const uint32_t panelW = HalDisplay::DISPLAY_WIDTH;
+  const uint32_t panelH = HalDisplay::DISPLAY_HEIGHT;
+  uint32_t x = 0;
+  uint32_t y = 0;
+  uint32_t w = panelW;
+  uint32_t h = panelH;
+  if (req.region) {
+    if (req.x >= panelW || req.y >= panelH || req.width == 0 ||
+        req.height == 0) {
+      SimGrpc::finishSnapshotError(req.corr, "empty_region");
+      return;
+    }
+    x = req.x;
+    y = req.y;
+    w = req.width;
+    h = req.height;
+    if (x + w > panelW)
+      w = panelW - x;
+    if (y + h > panelH)
+      h = panelH - y;
+    if (w == 0 || h == 0) {
+      SimGrpc::finishSnapshotError(req.corr, "empty_region");
+      return;
+    }
+  }
+
+  std::vector<uint8_t> gray(static_cast<size_t>(w) * h);
+  {
+    const std::lock_guard<std::mutex> lock(pixelBufMutex);
+    for (uint32_t row = 0; row < h; ++row) {
+      for (uint32_t col = 0; col < w; ++col) {
+        const uint32_t argb =
+            pixelBuf[(y + row) * panelW + (x + col)];
+        gray[row * w + col] = static_cast<uint8_t>(argb & 0xFFu);
+      }
+    }
+  }
+  SimGrpc::finishSnapshotGray(req.corr, SimGrpc::framebufferGeneration(), w, h,
+                              std::move(gray));
+}
+#endif
+
 uint32_t argbGray(uint8_t level) {
   return 0xFF000000u | (static_cast<uint32_t>(level) << 16) |
          (static_cast<uint32_t>(level) << 8) | level;
@@ -415,6 +467,9 @@ void HalDisplay::refreshDisplay(RefreshMode /*mode*/, bool /*turnOffScreen*/) {
 
 // Called from the main thread (simulator_main.cpp) to push pixels to SDL.
 void HalDisplay::presentIfNeeded() {
+#ifdef CROSSPOINT_SIM_GRPC
+  captureSessionSnapshotIfRequested();
+#endif
   const bool screenshotDue = hasDueScreenshot();
   if (!pendingPresent.exchange(false) && !screenshotDue)
     return;
