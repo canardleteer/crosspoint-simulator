@@ -365,9 +365,14 @@ void HalDisplay::begin() {
 
   // SDL_WINDOW_ALLOW_HIGHDPI lets the renderer use full Retina/HiDPI pixels on
   // macOS so we get crisp 1:1 rendering instead of a blurry upscale.
+  Uint32 window_flags = SDL_WINDOW_ALLOW_HIGHDPI;
+#ifdef CROSSPOINT_SIM_GRPC
+  window_flags |= SimGrpc::headless() ? SDL_WINDOW_HIDDEN : SDL_WINDOW_SHOWN;
+#else
+  window_flags |= SDL_WINDOW_SHOWN;
+#endif
   window = SDL_CreateWindow(WINDOW_TITLE, SDL_WINDOWPOS_UNDEFINED,
-                            SDL_WINDOWPOS_UNDEFINED, winW, winH,
-                            SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI);
+                            SDL_WINDOWPOS_UNDEFINED, winW, winH, window_flags);
   sdl_renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
   // Keep all rendering logic in logical (winW×winH) coordinates; SDL maps to

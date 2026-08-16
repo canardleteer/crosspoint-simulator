@@ -128,6 +128,13 @@ same path as existing synthetic input. `InputAck` is sent only when the
 host set `ack_requested`; do not invent acks. Snapshot capture stays on
 the SDL main thread; encode off that thread.
 
+`--sim-headless` or `CROSSPOINT_SIM_HEADLESS=1` (same truthy rule as
+`CROSSPOINT_SIM_GRPC`) hides the SDL window and drops local keyboard,
+mouse, home, sleep, and `SDL_QUIT`. Keep polling so the queue does not
+stall; keep applying remote and script injects. Do not `setenv` the
+flag (`SimulatorLifecycle::rebootAsPowerWake` uses `execvp`). Report
+`Heartbeat.headless`. A headless process exits on `ShutdownRequest`.
+
 Bugs that precede commit `92520e1` are separate commits so they can
 rebase upstream, not only on this client branch.
 
