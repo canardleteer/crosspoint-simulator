@@ -6,7 +6,7 @@ This file is a README for agents: the extra build, architecture, and convention 
 
 A desktop simulator for [CrossPoint](https://github.com/crosspoint-reader/crosspoint-reader) firmware. It is **not** a standalone app, it ships as a PlatformIO library that downstream firmware adds as a `lib_dep` (named `simulator`) and builds with `platform = native` and `-DSIMULATOR`. The result is the firmware compiled as a host binary, with the e-ink display rendered into an SDL2 window.
 
-There is no build target inside this repo. Build and run happen in the consuming firmware project. See [README.md](README.md) for end-user setup, and [.claude/CONTEXT-sim-notes.md](.claude/CONTEXT-sim-notes.md) for the deep architecture notes and bug-fix history (read this before non-trivial changes).
+There is no build target inside this repo. Build and run happen in the consuming firmware project. See [README.md](README.md) for end-user setup, and [docs/simulator-context.md](docs/simulator-context.md) for the deep architecture notes and bug-fix history (read this before non-trivial changes).
 
 ## Build and run (from the consuming firmware repo)
 
