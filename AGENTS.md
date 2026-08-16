@@ -110,6 +110,30 @@ automation cannot enter an infinite sleep/relaunch cycle.
 
 If the change is about **what the simulator does** (Arduino/ESP-IDF gaps, rendering, storage, threading, input, web shims, host portability), it belongs here. If it is about **what a firmware fork's HAL looks like** (add/remove/change a `Hal*` method, or device profiles for hardware this project does not target), keep it in a fork of this repo and point the firmware `lib_deps` at that fork. See [FORKING.md](FORKING.md). Once a fork-only HAL change lands in [crosspoint-reader](https://github.com/crosspoint-reader/crosspoint-reader), track it here and drop the fork patch.
 
+## Session client
+
+An optional grpc++ client can dial a host `Session` listener (plaintext
+gRPC). Default simulator builds must stay unchanged: do not compile or
+link this client unless `-DCROSSPOINT_SIM_GRPC` is set. When compiled
+in, dialing is still opt-in at startup. Do not write RPC bytes to
+stdout. Linux is the only current test host.
+
+All Session client C++ lives under [src/sim_grpc/](src/sim_grpc/).
+Generated protobuf and grpc++ stubs are deposited in
+[src/sim_grpc/gen/](src/sim_grpc/gen/); hand-written client code sits
+beside them. This tree does not contain `.proto` files and must
+not require them to build. Do not add ConnectRPC, Connect, or gRPC-Web
+here.
+
+Use a dedicated worker thread. Never call RPC from `simulator_main`,
+`presentIfNeeded`, or `HalGPIO::update`. Drain remote injects on the
+same path as existing synthetic input. `InputAck` is sent only when the
+host set `ack_requested`; do not invent acks. Snapshot capture stays on
+the SDL main thread; encode off that thread.
+
+Bugs that precede commit `92520e1` are separate commits so they can
+rebase upstream, not only on this client branch.
+
 ## Agent Documentation Standards
 
 Project-local skills exist under `.agents/skills/` and should remain
