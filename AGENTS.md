@@ -4,9 +4,39 @@ This file is a README for agents: the extra build, architecture, and convention 
 
 ## What this repo is
 
-A desktop simulator for [CrossPoint](https://github.com/crosspoint-reader/crosspoint-reader) firmware. It is **not** a standalone app, it ships as a PlatformIO library that downstream firmware adds as a `lib_dep` (named `simulator`) and builds with `platform = native` and `-DSIMULATOR`. The result is the firmware compiled as a host binary, with the e-ink display rendered into an SDL2 window.
+A desktop simulator for [crosspoint-reader](https://github.com/crosspoint-reader/crosspoint-reader) firmware (the CrossPoint reader). It is **not** a standalone app, it ships as a PlatformIO library that downstream firmware adds as a `lib_dep` (named `simulator`) and builds with `platform = native` and `-DSIMULATOR`. The result is the firmware compiled as a host binary, with the e-ink display rendered into an SDL2 window.
 
-There is no build target inside this repo. Build and run happen in the consuming firmware project. See [README.md](README.md) for end-user setup, and [docs/simulator-context.md](docs/simulator-context.md) for the deep architecture notes and bug-fix history (read this before non-trivial changes).
+There is no build target inside this repo. Build and run happen in the consuming firmware project, typically a checkout of [crosspoint-reader](https://github.com/crosspoint-reader/crosspoint-reader). See [README.md](README.md) for end-user setup, [FORKING.md](FORKING.md) when the consuming firmware's HAL diverges, and [docs/simulator-context.md](docs/simulator-context.md) for the deep architecture notes and bug-fix history (read this before non-trivial changes).
+
+This library **replaces** the firmware HAL rather than extending it. The consuming `[env:simulator]` lists `hal` in `lib_ignore`, and this repo supplies `HalDisplay`, `HalStorage`, `HalGPIO`, and the rest. Editing `.pio/libdeps/simulator/` is not a fork; PlatformIO will wipe it.
+
+## Faithfulness
+
+This is a **host twin of the firmware**, not a hardware emulator. The same firmware sources run on the desktop. What you can trust, and what you must not infer from a sim run:
+
+**Faithful enough for UI and file-flow work**
+
+- Firmware logic, menus, indexing, and caches are the real code. `/books/` on the SD card is `./fs_/books/` under the binary's working directory.
+- Device profiles report the same framebuffer geometry and capability flags as the matching production board (`BoardConfig.h`). The selected controller appears in the window title.
+- Buttons, Home, and touch/swipe go through the same `HalGPIO` state as on device.
+- Firmware-owned HTTP/WebDAV/WebSocket routes run against the host shims. OPDS and KOReader sync use the host `curl` binary (or `CROSSPOINT_SIM_HTTP_MOCK_ROOT` fixtures) while still exercising firmware parse/download/write paths.
+
+**Host stand-ins (same API, different physics)**
+
+- The SDL window is the 1bpp framebuffer uploaded on the main thread. It does **not** model e-ink controller timing, LUT waveforms, ghosting, or power sequencing.
+- JPEG/PNG paths are desktop previews (default `stb_image`, or opt-in native decoders). Neither matches device image quality, refresh behaviour, or memory pressure.
+- `millis()` / `micros()` are host `steady_clock`. FreeRTOS tasks are `std::thread`. Deep sleep is a process relaunch plus a synthetic power-button wake, not ESP sleep/resume.
+- Firmware binds of port 80/81 are exposed on `8080`/`8081` (or the `CROSSPOINT_SIM_HTTP_PORT` pair). Reported heap is a host override (1 MiB default), not ESP SRAM.
+- Serial/`LOG_*` go to stderr.
+
+**Intentionally non-faithful**
+
+- A new HAL or Arduino/ESP-IDF symbol is often a one-line no-op until someone implements behaviour. Linking is not proof the call does something.
+- OTA and SD-card firmware flashing are non-destructive stubs so those UIs can open without writing partitions.
+- WebDAV `LOCK` / `UNLOCK` are compatibility-only unless the firmware implements locking.
+- The UC8279 X4 Pro profile mirrors current FreeInk SDK flags but is pending validation on physical UC8279 X4 Pro hardware.
+
+Do not treat a clean simulator run as proof of e-ink waveforms, power draw, heap exhaustion, or boot-partition updates. See [README.md](README.md) for the human-facing notes this list is drawn from.
 
 ## Build and run (from the consuming firmware repo)
 
@@ -70,10 +100,12 @@ automation cannot enter an infinite sleep/relaunch cycle.
 
 ## When making changes
 
-- Adding a new HAL method? Mirror the firmware signature exactly and stub it (usually no-op) in the matching `Hal*.cpp/.h`. Do not invent new public methods that don't exist in the firmware HAL.
+- Adding a new HAL method? Mirror the firmware signature exactly and stub it (usually no-op) in the matching `Hal*.cpp/.h`. Do not invent new public methods that don't exist in the firmware HAL. Keep the diff small and additive; do not reformat a `Hal*.cpp` file as a drive-by.
 - Adding a new Arduino/ESP-IDF symbol? Add the minimum stub to the corresponding header in [src/](src/) (e.g. [src/WiFi.h](src/WiFi.h), [src/Arduino.h](src/Arduino.h)). Match the upstream signature, return a sensible default.
 - Touching storage or caching code? After the change, `rm -rf ./fs_/.crosspoint/` in the firmware project before re-running, otherwise stale caches built by the old code will mask the fix.
 - Touching display, threading, or shutdown? Re-read the "Why the simulator's design has the shape it does" section above first. Several of those decisions undo subtle bugs that will resurface if reverted.
+
+If the change is about **what the simulator does** (Arduino/ESP-IDF gaps, rendering, storage, threading, input, web shims, host portability), it belongs here. If it is about **what a firmware fork's HAL looks like** (add/remove/change a `Hal*` method, or device profiles for hardware this project does not target), keep it in a fork of this repo and point the firmware `lib_deps` at that fork. See [FORKING.md](FORKING.md). Once a fork-only HAL change lands in [crosspoint-reader](https://github.com/crosspoint-reader/crosspoint-reader), track it here and drop the fork patch.
 
 ## Agent Documentation Standards
 
