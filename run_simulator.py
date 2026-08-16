@@ -114,10 +114,42 @@ def _parse_grpc_pkgconfig(target_env):
     except Exception as exc:
         print(
             "[SIM] CROSSPOINT_SIM_GRPC is set but pkg-config grpc++ / protobuf "
-            "failed. Install libgrpc++-dev and libprotobuf-dev, or set "
-            "PKG_CONFIG_PATH to a working grpc++ prefix."
+            "failed. Point PKG_CONFIG_PATH at a local protobuf 35 / grpc++ 1.83 "
+            "prefix (Ubuntu apt 3.21 / 1.51 is too old for the deposited stubs)."
         )
         raise exc
+    # Static prefixes keep upb / c-ares / re2 / address_sorting in
+    # Libs.private. pkg-config --static can hang on circular Requires.
+    try:
+        import subprocess
+
+        libdir = subprocess.check_output(
+            ["pkg-config", "--variable=libdir", "grpc++"],
+            text=True,
+            timeout=5,
+        ).strip()
+    except Exception:
+        return
+    extra = []
+    pc = os.path.join(libdir, "pkgconfig", "grpc++.pc")
+    if os.path.isfile(pc):
+        for line in open(pc, encoding="utf-8"):
+            if line.startswith("Libs.private:"):
+                extra.extend(
+                    flag[2:]
+                    for flag in line.split(":", 1)[1].split()
+                    if flag.startswith("-l")
+                )
+    for name in ("cares", "re2"):
+        if os.path.isfile(os.path.join(libdir, f"lib{name}.a")) or os.path.isfile(
+            os.path.join(libdir, f"lib{name}.so")
+        ):
+            extra.append(name)
+    if extra:
+        target_env.Append(LIBS=extra)
+        target_env.Append(LIBPATH=[libdir])
+    if libdir:
+        target_env.Append(LINKFLAGS=[f"-Wl,-rpath,{libdir}"])
 
 
 def _enable_session_client():
