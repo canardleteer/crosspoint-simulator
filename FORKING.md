@@ -23,6 +23,12 @@ The split is about the kind of change, not which file it lands in.
 - Bugs in how the simulator *behaves*: display rendering, orientation, dithering, storage, threading, input handling, the web server shims. These live in `Hal*.cpp` files too, but they are simulator internals rather than API surface, and a fix helps everyone.
 - Host portability fixes: new distros, new SDL versions, compiler flag corrections.
 
+Host `BoardConfig`, `EInkDisplay`, and `InputManager` emulate the FreeInk SDK
+surface. Device selection is `-DFREEINK_DEVICE_*`, the same flags firmware
+envs already pass. `SIMULATOR_DISPLAY_*` is the host controller override.
+`Hal*` here stays a thin compatibility layer until a consumer compiles its
+own HAL against these shims.
+
 The short version: if the change is about **what the simulator does**, upstream wants it. If it is about **what your firmware's HAL looks like**, keep it in your fork.
 
 > [!NOTE]

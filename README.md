@@ -45,27 +45,40 @@ the simulator's lower-level `WebServer`, `WebSocketsServer`, and
 WebDAV routes instead of a reduced simulator-only substitute.
 
 The simulator defaults to the original X4 panel shape and SSD1677 controller.
-Device-specific environments can extend the base simulator environment with
-these flags:
+Device identity is the same `-DFREEINK_DEVICE_*` contract the firmware and
+FreeInk SDK already use. Sample environments pass those flags (and the matching
+`BOARD_HAS_PSRAM` / `USE_BLOCK_DEVICE_INTERFACE` extras where hardware does):
 
-- `-DSIMULATOR_DEVICE_X3` switches the framebuffer to 792x528 landscape,
-  selects the X3 board profile, and exposes the simulator tilt sensor.
-- `-DSIMULATOR_DEVICE_X4_PRO` keeps the X4 family's 800x480 framebuffer and
-  selects the X4 Pro board profile. It exposes touch and swipe input, the
-  capacitive Home key, the RTC, display inversion, and frontlight state.
-- `-DSIMULATOR_DEVICE_STICKY` selects the Seeed Sticky's 800x480 SSD1677
-  profile. It exposes touch and swipe input, the RTC, and the tilt sensor
-  without exposing the X4 Pro-only Home key or frontlight.
+- `-DFREEINK_DEVICE_X4=1` (default) keeps the 800x480 X4 window.
+- `-DFREEINK_DEVICE_X3=1` switches the live profile to 792x528 landscape and
+  exposes the simulator tilt sensor and RTC.
+- `-DFREEINK_DEVICE_X4PRO=1` keeps the 800x480 framebuffer and selects the
+  X4 Pro profile: touch and swipe, capacitive Home key, RTC, inversion,
+  warm frontlight, and `FREEINK_CAP_WARMLIGHT`.
+- `-DFREEINK_DEVICE_STICKY=1` selects Seeed Sticky: 800x480 SSD1677, touch
+  and swipe, RTC, tilt, and a PDM mic capability flag. No Home key or
+  frontlight.
+- `-DFREEINK_DEVICE_PAPERMONO=1` selects M5Stack Paper Mono: 800x480, FT5x06
+  single-contact touch, PMIC frontlight, RTC, and combined 3-gray presents.
 - `-DSIMULATOR_DISPLAY_UC8179` selects the newer UC8179 controller used by
-  some X4 and X4 Pro production batches.
+  some X4 and X4 Pro production batches. This is a host-only override; the
+  desktop build has no controller probe.
 - `-DSIMULATOR_DISPLAY_UC8279` selects UC8279d on X3, or the 800x480 UC8279
   controller on X4-family profiles.
 
-The sample PlatformIO files include ready-to-use environments for the original
-profiles plus `simulator_sticky`, `simulator_x3_uc8279`, `simulator_x4_uc8179`,
-`simulator_x4_uc8279`, `simulator_x4_pro_uc8179`, and
-`simulator_x4_pro_uc8279`. The UC8279 X4 Pro path mirrors current FreeInk SDK
-support but remains pending validation on physical UC8279 X4 Pro hardware.
+Older `-DSIMULATOR_DEVICE_X3`, `-DSIMULATOR_DEVICE_X4_PRO`, and
+`-DSIMULATOR_DEVICE_STICKY` flags still compile as non-overwriting shims.
+They may turn a matching `FREEINK_DEVICE_*` on if the firmware env did not
+already set it; they do not clear flags the firmware passed. Do not invent
+`SIMULATOR_DEVICE_PAPERMONO`. A C3 env may set both X3 and X4; `ACTIVE`
+defaults to X4 until something calls `selectDevice`.
+
+The sample PlatformIO files include ready-to-use environments for those
+profiles plus `simulator_papermono`, `simulator_sticky`,
+`simulator_x3_uc8279`, `simulator_x4_uc8179`, `simulator_x4_uc8279`,
+`simulator_x4_pro_uc8179`, and `simulator_x4_pro_uc8279`. The UC8279 X4 Pro
+path mirrors current FreeInk SDK support but remains pending validation on
+physical UC8279 X4 Pro hardware.
 
 Controller profiles expose the same framebuffer geometry and device
 capabilities as their original production run. The simulator records the

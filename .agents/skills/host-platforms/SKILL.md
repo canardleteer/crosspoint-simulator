@@ -53,5 +53,6 @@ native Windows build path.
 
 ## When this skill does not apply
 
-Device profiles (`SIMULATOR_DEVICE_*`), input mapping, storage, and
-FreeRTOS shims are shared. Leave those in the root `AGENTS.md` file.
+Device profiles (`FREEINK_DEVICE_*`, plus host-only `SIMULATOR_DISPLAY_*`),
+input mapping, storage, and FreeRTOS shims are shared. Leave those in the
+root `AGENTS.md` file.
