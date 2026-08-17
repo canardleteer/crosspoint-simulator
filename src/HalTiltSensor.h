@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include <BoardConfig.h>
 
 #include "HalGPIO.h"
 
@@ -27,11 +28,7 @@ private:
 
 public:
   void begin() {
-#if defined(SIMULATOR_DEVICE_X3) || defined(SIMULATOR_DEVICE_STICKY)
-    _available = true;
-#else
-    _available = false;
-#endif
+    _available = FREEINK_CAP_IMU;
     _isAwake = false;
   }
 

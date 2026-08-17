@@ -1,17 +1,14 @@
 #include "HalClock.h"
 
+#include <BoardConfig.h>
+
 #include <cstdio>
 #include <ctime>
 
 HalClock halClock;
 
 void HalClock::begin() {
-#if defined(SIMULATOR_DEVICE_X3) || defined(SIMULATOR_DEVICE_X4_PRO) || \
-    defined(SIMULATOR_DEVICE_STICKY)
-  _available = true;
-#else
-  _available = false;
-#endif
+  _available = FREEINK_CAP_RTC;
 }
 
 bool HalClock::getTime(uint8_t &hour, uint8_t &minute) const {

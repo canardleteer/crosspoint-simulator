@@ -22,10 +22,10 @@ void HalFrontlight::begin(uint8_t brightness, uint8_t warmth, bool on) {
             << std::endl;
 }
 
-bool HalFrontlight::present() const { return BoardConfig::isX4Pro(); }
+bool HalFrontlight::present() const { return BoardConfig::hasFrontlight(); }
 
 bool HalFrontlight::hasColorTemperature() const {
-  return BoardConfig::isX4Pro();
+  return BoardConfig::hasColorTemperature();
 }
 
 void HalFrontlight::setBrightness(uint8_t percent) {
