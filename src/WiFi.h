@@ -291,5 +291,8 @@ public:
 };
 extern WiFiClass WiFi;
 
+inline void configTzTime(const char *, const char *, const char * = nullptr,
+                         const char * = nullptr) {}
+
 #define WIFI_SCAN_RUNNING -1
 #define WIFI_SCAN_FAILED -2
