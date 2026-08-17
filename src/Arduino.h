@@ -43,6 +43,9 @@ inline void delay(unsigned long ms) {
 }
 inline void yield() { std::this_thread::yield(); }
 
+inline uint32_t getCpuFrequencyMhz() { return 160; }
+inline bool setCpuFrequencyMhz(uint32_t) { return true; }
+
 // Native builds have no GPIO pins. Treat every input as released, matching the
 // idle pull-up state used by the button diagnostics in firmware startup.
 inline int digitalRead(int /*pin*/) { return 1; }
