@@ -88,14 +88,8 @@ public:
   bool supportsStripGrayscale() const;
   bool combinesGrayscaleBase() const;
 
-  // Simulator only: call from main thread to push rendered pixels to SDL.
-  void presentIfNeeded();
-  // Simulator only: returns true once a hard shutdown has been requested.
-  bool shouldQuit() const;
-
 private:
   mutable EInkDisplay einkDisplay;
-  bool inverted = false;
 };
 
 extern HalDisplay display;

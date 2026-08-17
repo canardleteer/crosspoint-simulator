@@ -58,7 +58,7 @@ The simulator is a collection of host-side reimplementations of the firmware's h
 
 **Why the simulator's design has the shape it does** (the non-obvious parts):
 
-- **SDL on main thread.** Firmware drives rendering from a FreeRTOS render task. The split lives in [src/HalDisplay.cpp](src/HalDisplay.cpp): `refreshDisplay` (background thread) converts the 1bpp framebuffer to ARGB and sets an atomic `pendingPresent` flag. `presentIfNeeded` (called from `simulator_main` on the main thread) does the actual SDL upload and present. Do not call SDL render functions from anywhere else.
+- **SDL on main thread.** Firmware drives rendering from a FreeRTOS render task. The split lives in [src/EInkDisplay.cpp](src/EInkDisplay.cpp) and [src/SimulatorDisplay.cpp](src/SimulatorDisplay.cpp): `refreshDisplay` (background thread) converts the 1bpp framebuffer to ARGB and sets an atomic `pendingPresent` flag. `SimulatorDisplay::presentIfNeeded` (called from `simulator_main` on the main thread) does the actual SDL upload and present. Do not call SDL render functions from anywhere else.
 - **Orientation rotation lives in two places.** The firmware's renderer rotates content into the landscape framebuffer (90 CCW for `Portrait`). The simulator undoes that with `SDL_RenderCopyEx`. If you change one, change the other. The dst rect is landscape-shaped and centre-offset because `SDL_RenderCopyEx` rotates around the dst centre.
 - **HiDPI / dithering.** Set `SDL_HINT_RENDER_SCALE_QUALITY=1` *before* `SDL_CreateTexture`, plus `SDL_WINDOW_ALLOW_HIGHDPI` and `SDL_RenderSetLogicalSize`. Keep all three.
 - **POSIX fds, not std::fstream, in [src/HalStorage.cpp](src/HalStorage.cpp).** This was a deliberate rewrite. fstream's separate get/put pointers, eofbit-blocks-seek behaviour, and write-only seek restrictions caused several silent-corruption bugs. Do not reintroduce fstream here. All paths are prefixed with `./fs_` so the simulated filesystem stays sandboxed under the binary's working directory; `/books/` on the SD card maps to `./fs_/books/`. Directory iteration skips only the special `.` and `..` entries; firmware applies its own hidden-file policy.
@@ -90,7 +90,7 @@ Sticky also uses 800x480 and adds touch, RTC, and tilt without a Home key or
 frontlight. Paper Mono uses 800x480 with FT5x06 touch, a PMIC frontlight, and
 combined grayscale presents.
 
-`HalGPIO::update` owns the SDL event pump for the whole simulator, do not poll SDL events elsewhere. Scancodes map to button indices `BTN_BACK=0` through `BTN_POWER=6`. `SDL_QUIT` sets the `quitRequested` atomic that `HalDisplay::shouldQuit()` reads.
+`HalGPIO::update` owns the SDL event pump for the whole simulator, do not poll SDL events elsewhere. Scancodes map to button indices `BTN_BACK=0` through `BTN_POWER=6`. `SDL_QUIT` sets the quit flag that `SimulatorDisplay::shouldQuit()` reads.
 
 For repeatable QA, `CROSSPOINT_SIM_INPUT_SCRIPT` schedules synthetic key and
 touch-device edges through the same `HalGPIO` state as real SDL input, and

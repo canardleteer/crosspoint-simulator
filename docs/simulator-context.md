@@ -53,7 +53,7 @@ pio run -e simulator -t run_simulator
 
 ## How It Works
 
-**Display thread model.** SDL on macOS requires all SDL calls happen on the main thread, but firmware drives rendering from a FreeRTOS render task (now a `std::thread`). The split: [HalDisplay::refreshDisplay](../src/HalDisplay.cpp) (background thread) converts the 1bpp framebuffer to ARGB pixels and sets an atomic `pendingPresent` flag. [HalDisplay::presentIfNeeded](../src/HalDisplay.cpp) (called from `simulator_main` on the main thread) uploads to the texture, applies orientation rotation, and calls `SDL_RenderPresent`.
+**Display thread model.** SDL on macOS requires all SDL calls happen on the main thread, but firmware drives rendering from a FreeRTOS render task (now a `std::thread`). The split: [EInkDisplay::refreshDisplay](../src/EInkDisplay.cpp) (background thread) converts the 1bpp framebuffer to ARGB pixels and sets an atomic `pendingPresent` flag. [SimulatorDisplay::presentIfNeeded](../src/SimulatorDisplay.cpp) (called from `simulator_main` on the main thread) uploads to the texture, applies orientation rotation, and calls `SDL_RenderPresent`.
 
 **Orientation.** The renderer's `rotateCoordinates` writes content into the physical landscape buffer rotated 90° CCW for `Portrait` (and 90° CW for `PortraitInverted`). The simulator undoes this with `SDL_RenderCopyEx` rotation:
 
@@ -69,7 +69,7 @@ pio run -e simulator -t run_simulator
 
 **Filesystem.** [HalStorage](../src/HalStorage.cpp) uses POSIX file descriptors (`::open` / `::read` / `::write` / `lseek` / `fsync`) — not `std::fstream`. fstream's separate get/put pointers, eofbit-blocks-seek behaviour, and write-only mode restrictions caused several silent-corruption bugs early on; POSIX fds avoid all of them. `HalStorage::open()` `stat()`s the path and routes to `openAsDir` (DIR\*) or file-open. Directory iteration uses `readdir`/`rewinddir`, skipping any entry starting with `.`. All paths are prefixed with `./fs_` so the simulator's filesystem is sandboxed in a single directory under the binary's working dir.
 
-**Input.** [HalGPIO::update](../src/HalGPIO.cpp) owns the SDL event pump (so polling isn't split between callers). It maps SDL scancodes → button indices (`BTN_BACK=0` … `BTN_POWER=6`) and maintains per-frame pressed/released arrays. On X4 Pro, SDL mouse input is transformed from the oriented logical window back into normalized physical touch coordinates, and `H` emulates the capacitive Home key. `SDL_QUIT` sets the shared `quitRequested` atomic that `HalDisplay::shouldQuit()` reads.
+**Input.** [HalGPIO::update](../src/HalGPIO.cpp) owns the SDL event pump (so polling isn't split between callers). It maps SDL scancodes → button indices (`BTN_BACK=0` … `BTN_POWER=6`) and maintains per-frame pressed/released arrays. On X4 Pro, SDL mouse input is transformed from the oriented logical window back into normalized physical touch coordinates, and `H` emulates the capacitive Home key. `SDL_QUIT` sets the quit flag that `SimulatorDisplay::shouldQuit()` reads.
 
 **Threading.** [src/freertos/](../src/freertos/) maps `xTaskCreate` to `std::thread`, `ulTaskNotifyTake`/`xTaskNotify` to a condvar + counter, and `SemaphoreHandle_t` to `std::recursive_mutex`. `thread_local SimTaskHandle*` lets each task thread find its own handle for notifies.
 

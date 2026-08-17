@@ -19,8 +19,8 @@ when build flags change.
 ## Why the shared SDL rules exist
 
 macOS requires all SDL calls to come from the main thread. That is why
-`refreshDisplay` stays off the SDL path and `presentIfNeeded` runs on the
-main thread.
+`refreshDisplay` stays off the SDL path and
+`SimulatorDisplay::presentIfNeeded` runs on the main thread.
 
 Without `SDL_HINT_RENDER_SCALE_QUALITY=1` (set before
 `SDL_CreateTexture`), `SDL_WINDOW_ALLOW_HIGHDPI`, and

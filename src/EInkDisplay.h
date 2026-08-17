@@ -35,20 +35,38 @@ public:
 
   EInkDisplay() = default;
   EInkDisplay(int, int, int, int, int, int) {}
-  void begin() {}
+  void begin();
+  void setDisplayX3() {}
+  void skipInitialResync() {}
+  void requestResync(uint8_t = 0) {}
   void clearScreen(uint8_t color);
   void drawImage(const uint8_t *imageData, uint16_t x, uint16_t y, uint16_t w,
                  uint16_t h, bool fromProgmem = false);
   void drawImageTransparent(const uint8_t *imageData, uint16_t x, uint16_t y,
                             uint16_t w, uint16_t h, bool fromProgmem = false);
-  void displayBuffer(RefreshMode mode, bool turnOffScreen) {}
-  void refreshDisplay(RefreshMode mode, bool turnOffScreen) {}
-  void deepSleep() {}
+  void setInverted(bool value) { inverted = value; }
+  bool toggleInverted() {
+    inverted = !inverted;
+    return inverted;
+  }
+  bool isInverted() const { return inverted; }
+  void displayBuffer(RefreshMode mode, bool turnOffScreen);
+  void displayBufferAsync(RefreshMode mode);
+  void displayBufferAsyncNoShadow(RefreshMode mode);
+  void waitRefreshComplete() {}
+  bool supportsAsyncRefresh() const { return false; }
+  void refreshDisplay(RefreshMode mode, bool turnOffScreen);
+  void setBusyWaitSliceHook(bool (*)(int8_t, uint8_t)) {}
+  void deepSleep();
 
   uint8_t *getFrameBuffer();
   const uint8_t *getFrameBuffer() const;
   uint8_t *lendFrameBufferStorage(uint32_t *sizeOut);
   void returnFrameBufferStorage();
+  uint8_t *lendBuildStorage(uint32_t *sizeOut) {
+    return lendFrameBufferStorage(sizeOut);
+  }
+  void returnBuildStorage() { returnFrameBufferStorage(); }
   bool isFrameBufferLent() const { return frameBufferLent; }
 
   uint16_t getDisplayWidth() const { return BoardConfig::ACTIVE.displayWidth; }
@@ -64,9 +82,13 @@ public:
   void copyGrayscaleLsbBuffers(const uint8_t *lsbBuffer);
   void copyGrayscaleMsbBuffers(const uint8_t *msbBuffer);
   void cleanupGrayscaleBuffers(const uint8_t *bwBuffer);
+  void displayGrayscaleBase(RefreshMode fallback = HALF_REFRESH,
+                            bool turnOffScreen = false);
+  void preconditionGrayscale() {}
+  void preconditionGrayscale(uint16_t, uint16_t, uint16_t, uint16_t) {}
   void displayGrayBuffer(bool turnOffScreen = false,
                          const unsigned char *lut = nullptr,
-                         bool factoryMode = false) {}
+                         bool factoryMode = false);
   void writeGrayscalePlaneStrip(GrayPlane plane, const uint8_t *rows,
                                 uint16_t yStart, uint16_t numRows);
   bool supportsStripGrayscale() const { return true; }
@@ -84,6 +106,7 @@ private:
   bool lsbValid = false;
   bool msbValid = false;
   bool frameBufferLent = false;
+  bool inverted = false;
 
   static bool getBit(const uint8_t *buffer, int x, int y);
   void copyPlane(std::array<uint8_t, BUFFER_SIZE> &dst, const uint8_t *src,

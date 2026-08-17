@@ -1,5 +1,7 @@
 #include "EInkDisplay.h"
 
+#include "SimulatorDisplay.h"
+
 #include <cstring>
 
 namespace {
@@ -37,6 +39,40 @@ void EInkDisplay::copyPlane(std::array<uint8_t, BUFFER_SIZE> &dst,
   }
   memcpy(dst.data(), src, BUFFER_SIZE);
   valid = true;
+}
+
+void EInkDisplay::begin() { SimulatorDisplay::begin(); }
+
+void EInkDisplay::displayBuffer(RefreshMode mode, bool turnOffScreen) {
+  refreshDisplay(mode, turnOffScreen);
+  SimulatorDisplay::presentIfOnMainThread();
+}
+
+void EInkDisplay::displayBufferAsync(RefreshMode mode) {
+  refreshDisplay(mode, false);
+}
+
+void EInkDisplay::displayBufferAsyncNoShadow(RefreshMode mode) {
+  refreshDisplay(mode, false);
+}
+
+void EInkDisplay::refreshDisplay(RefreshMode, bool) {
+  snapshotBwBase();
+  SimulatorDisplay::scheduleBwPresent(*this);
+}
+
+void EInkDisplay::deepSleep() { SimulatorDisplay::presentIfNeeded(); }
+
+void EInkDisplay::displayGrayscaleBase(RefreshMode fallback, bool turnOffScreen) {
+  if (combinesGrayscaleBase()) {
+    snapshotBwBase();
+    return;
+  }
+  displayBuffer(fallback, turnOffScreen);
+}
+
+void EInkDisplay::displayGrayBuffer(bool, const unsigned char *, bool) {
+  SimulatorDisplay::scheduleGrayscalePresent(*this);
 }
 
 void EInkDisplay::clearScreen(uint8_t color) {

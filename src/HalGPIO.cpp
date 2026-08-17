@@ -5,7 +5,6 @@
 #include <SDL.h>
 
 #include <algorithm>
-#include <atomic>
 #include <cctype>
 #include <cmath>
 #include <cstdio>
@@ -13,12 +12,9 @@
 #include <string>
 #include <vector>
 
-#include "HalDisplay.h"
+#include "SimulatorDisplay.h"
 #include "SimulatorLifecycle.h"
 
-// Defined in HalDisplay.cpp — set here so all SDL event polling lives in one
-// place.
-extern std::atomic<bool> quitRequested;
 extern GfxRenderer renderer;
 
 // Keyboard mapping:
@@ -324,7 +320,7 @@ void processSyntheticEvents() {
       requestSimulatorSleep();
       break;
     case SyntheticAction::Quit:
-      quitRequested.store(true);
+      SimulatorDisplay::requestQuit();
       break;
     }
   }
@@ -394,11 +390,11 @@ void HalGPIO::update() {
   // update() calls in that frame, matching the on-device InputManager.
 
   // HalGPIO owns all SDL event polling so keyboard and quit events are never
-  // split between two callers (HalDisplay::presentIfNeeded only renders).
+  // split between two callers (SimulatorDisplay::presentIfNeeded only renders).
   SDL_Event e;
   while (SDL_PollEvent(&e) != 0) {
     if (e.type == SDL_QUIT) {
-      quitRequested.store(true);
+      SimulatorDisplay::requestQuit();
     } else if (e.type == SDL_KEYDOWN && !e.key.repeat) {
       if (e.key.keysym.scancode == HOME_KEY_SCANCODE) {
         inputMgr.beginHomeKey(SDL_GetTicks());
@@ -551,7 +547,7 @@ void HalGPIO::startDeepSleep() {
 
   while (true) {
     processSyntheticEvents();
-    if (quitRequested.load())
+    if (SimulatorDisplay::shouldQuit())
       return;
     for (int button = 0; button < NUM_BUTTONS; button++) {
       if (inputMgr.isPressed(static_cast<uint8_t>(button))) {
@@ -563,7 +559,7 @@ void HalGPIO::startDeepSleep() {
     SDL_Event e;
     while (SDL_PollEvent(&e) != 0) {
       if (e.type == SDL_QUIT) {
-        quitRequested.store(true);
+        SimulatorDisplay::requestQuit();
         return;
       }
 
