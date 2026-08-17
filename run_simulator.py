@@ -25,6 +25,10 @@ when multiple registration paths exist.
 """
 
 Import("env")
+try:
+    Import("pio_lib_builder")
+except Exception:
+    pio_lib_builder = None
 import os
 import builtins
 import re
@@ -48,6 +52,96 @@ def _run_simulator(source, target, env):
         runtime_env["CROSSPOINT_SIM_HTTP_PORT"] = configured_http_port
     subprocess.run([binary], cwd=os.getcwd(), env=runtime_env)
 
+
+SIMULATOR_DIR = (
+    pio_lib_builder.path
+    if pio_lib_builder is not None
+    else os.getcwd()
+)
+COMPAT_HAL_DIR = os.path.join(SIMULATOR_DIR, "src", "compat_hal")
+SIMULATOR_SRC_DIR = os.path.join(SIMULATOR_DIR, "src")
+THIN_FIRMWARE_HAL_HEADERS = (
+    "HalDisplay.h",
+    "HalFrontlight.h",
+    "HalTiltSensor.h",
+    "HalClock.h",
+)
+THIN_FIRMWARE_HAL_SOURCES = (
+    "HalDisplay.cpp",
+    "HalFrontlight.cpp",
+    "HalTiltSensor.cpp",
+    "HalClock.cpp",
+)
+
+
+def _firmware_hal_dir(build_env):
+    return os.path.join(build_env.subst("$PROJECT_DIR"), "lib", "hal")
+
+
+def _has_firmware_thin_hal(firmware_hal, headers=THIN_FIRMWARE_HAL_HEADERS):
+    return all(
+        os.path.isfile(os.path.join(firmware_hal, name)) for name in headers
+    )
+
+
+def _consumer_hal_overlay(
+    firmware_hal, build_dir, headers=THIN_FIRMWARE_HAL_HEADERS
+):
+    overlay = os.path.join(build_dir, "consumer_hal_inc")
+    os.makedirs(overlay, exist_ok=True)
+    for name in headers:
+        src = os.path.abspath(os.path.join(firmware_hal, name))
+        dst = os.path.join(overlay, name)
+        if os.path.lexists(dst):
+            os.remove(dst)
+        os.symlink(src, dst)
+    return overlay
+
+
+def _configure_consumer_hal(
+    build_env,
+    compat_hal_dir=COMPAT_HAL_DIR,
+    simulator_src_dir=os.path.join(SIMULATOR_DIR, "src"),
+    thin_sources=THIN_FIRMWARE_HAL_SOURCES,
+):
+    firmware_hal = _firmware_hal_dir(build_env)
+    if not _has_firmware_thin_hal(firmware_hal):
+        build_env.Append(CPPPATH=[compat_hal_dir])
+        return
+
+    # Keep lib_ignore = hal so firmware HalStorage.h / HalGPIO.h never enter
+    # the include path. Compile the thin firmware TUs as project sources and
+    # expose only those four headers.
+    build_env.Replace(SRC_FILTER=["+<*>", "-<compat_hal/>"])
+    from SCons.Script import DefaultEnvironment
+
+    project_env = DefaultEnvironment()
+    overlay = _consumer_hal_overlay(
+        firmware_hal, project_env.subst("$BUILD_DIR")
+    )
+    include_dirs = [overlay, simulator_src_dir]
+    logging_dir = os.path.join(project_env.subst("$PROJECT_DIR"), "lib", "Logging")
+    if os.path.isdir(logging_dir):
+        include_dirs.append(logging_dir)
+    project_env.Prepend(CPPPATH=include_dirs)
+    build_env.Prepend(CPPPATH=include_dirs)
+    sources = [
+        name
+        for name in thin_sources
+        if os.path.isfile(os.path.join(firmware_hal, name))
+    ]
+    if sources:
+        hal_env = project_env.Clone()
+        hal_env.Prepend(CPPPATH=include_dirs)
+        hal_env.Append(CCFLAGS=["-I%s" % path for path in include_dirs])
+        hal_env.BuildSources(
+            os.path.join(project_env.subst("$BUILD_DIR"), "consumer_hal"),
+            firmware_hal,
+            src_filter=" ".join("+<%s>" % name for name in sources),
+        )
+
+
+_configure_consumer_hal(env)
 
 target_owner = env.GetProjectOption(RUN_SIMULATOR_TARGET_OWNER_OPTION, "").strip().lower()
 

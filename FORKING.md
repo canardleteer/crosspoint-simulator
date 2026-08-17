@@ -1,6 +1,6 @@
 # Forking the simulator
 
-This simulator replaces the firmware's HAL rather than extending it. The consuming firmware's `[env:simulator]` lists `hal` in `lib_ignore`, which drops the firmware's entire `lib/hal/` from the build, and this library supplies `HalDisplay`, `HalStorage`, `HalGPIO`, and the rest in its place.
+This simulator replaces the firmware's HAL rather than extending it for GPIO, storage, power, and system. The consuming `[env:simulator]` lists `hal` in `lib_ignore` so firmware `HalStorage.h` / `HalGPIO.h` stay off the include path. Display, frontlight, tilt, and clock compile from the consumer's `lib/hal` TUs against host shims. This library still supplies `HalGPIO`, `HalStorage`, `HalPowerManager`, and `HalSystem`.
 
 That means the simulator is tied to one firmware's HAL by construction. If your fork changes a HAL signature, adds a HAL method, or removes one, you need a simulator that matches. **Fork this repo and point your firmware at your fork.** That is the supported path, not a workaround.
 

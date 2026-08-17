@@ -40,7 +40,7 @@ pio run -e simulator -t run_simulator
 | Purpose                     | Path                                                                |
 | --------------------------- | ------------------------------------------------------------------- |
 | Simulator entry point       | [src/simulator_main.cpp](../src/simulator_main.cpp)                    |
-| SDL display impl            | [src/HalDisplay.cpp](../src/HalDisplay.cpp)                            |
+| SDL display impl            | [src/SimulatorDisplay.cpp](../src/SimulatorDisplay.cpp)                |
 | SDL keyboard / quit input   | [src/HalGPIO.cpp](../src/HalGPIO.cpp)                                  |
 | POSIX-fd filesystem mock    | [src/HalStorage.cpp](../src/HalStorage.cpp)                            |
 | FreeRTOS → std::thread mock | [src/freertos/](../src/freertos/)                                      |

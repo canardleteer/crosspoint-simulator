@@ -75,12 +75,12 @@ void EInkDisplay::displayGrayBuffer(bool, const unsigned char *, bool) {
   SimulatorDisplay::scheduleGrayscalePresent(*this);
 }
 
-void EInkDisplay::clearScreen(uint8_t color) {
+void EInkDisplay::clearScreen(uint8_t color) const {
   memset(frameBuffer.data(), color, BUFFER_SIZE);
 }
 
 void EInkDisplay::drawImage(const uint8_t *imageData, uint16_t x, uint16_t y,
-                            uint16_t w, uint16_t h, bool) {
+                            uint16_t w, uint16_t h, bool) const {
   uint8_t *fb = getFrameBuffer();
   if (!fb)
     return;
@@ -101,7 +101,7 @@ void EInkDisplay::drawImage(const uint8_t *imageData, uint16_t x, uint16_t y,
 
 void EInkDisplay::drawImageTransparent(const uint8_t *imageData, uint16_t x,
                                        uint16_t y, uint16_t w, uint16_t h,
-                                       bool) {
+                                       bool) const {
   uint8_t *fb = getFrameBuffer();
   if (!fb)
     return;
@@ -126,7 +126,7 @@ uint8_t *EInkDisplay::getFrameBuffer() {
   return frameBuffer.data();
 }
 
-const uint8_t *EInkDisplay::getFrameBuffer() const {
+uint8_t *EInkDisplay::getFrameBuffer() const {
   if (frameBufferLent)
     return nullptr;
   return frameBuffer.data();

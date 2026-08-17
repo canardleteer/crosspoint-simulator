@@ -8,7 +8,7 @@ A desktop simulator for [crosspoint-reader](https://github.com/crosspoint-reader
 
 There is no build target inside this repo. Build and run happen in the consuming firmware project, typically a checkout of [crosspoint-reader](https://github.com/crosspoint-reader/crosspoint-reader). See [README.md](README.md) for end-user setup, [FORKING.md](FORKING.md) when the consuming firmware's HAL diverges, and [docs/simulator-context.md](docs/simulator-context.md) for the deep architecture notes and bug-fix history (read this before non-trivial changes).
 
-This library **replaces** the firmware HAL rather than extending it. The consuming `[env:simulator]` lists `hal` in `lib_ignore`, and this repo supplies `HalDisplay`, `HalStorage`, `HalGPIO`, and the rest. Editing `.pio/libdeps/simulator/` is not a fork; PlatformIO will wipe it.
+This library **replaces** the firmware HAL rather than extending it for GPIO, storage, power, and system. The consuming `[env:simulator]` still lists `hal` in `lib_ignore` so firmware `HalStorage.h` / `HalGPIO.h` stay off the include path. The extra script compiles firmware display, frontlight, tilt, and clock TUs against host `EInkDisplay` / `FrontlightManager` / `Imu` / `Rtc`. Consumers without those firmware files keep the host copies under `src/compat_hal/`. Editing `.pio/libdeps/simulator/` is not a fork; PlatformIO will wipe it.
 
 ## Faithfulness
 

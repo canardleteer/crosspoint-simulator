@@ -39,11 +39,11 @@ public:
   void setDisplayX3() {}
   void skipInitialResync() {}
   void requestResync(uint8_t = 0) {}
-  void clearScreen(uint8_t color);
+  void clearScreen(uint8_t color) const;
   void drawImage(const uint8_t *imageData, uint16_t x, uint16_t y, uint16_t w,
-                 uint16_t h, bool fromProgmem = false);
+                 uint16_t h, bool fromProgmem = false) const;
   void drawImageTransparent(const uint8_t *imageData, uint16_t x, uint16_t y,
-                            uint16_t w, uint16_t h, bool fromProgmem = false);
+                            uint16_t w, uint16_t h, bool fromProgmem = false) const;
   void setInverted(bool value) { inverted = value; }
   bool toggleInverted() {
     inverted = !inverted;
@@ -60,7 +60,7 @@ public:
   void deepSleep();
 
   uint8_t *getFrameBuffer();
-  const uint8_t *getFrameBuffer() const;
+  uint8_t *getFrameBuffer() const;
   uint8_t *lendFrameBufferStorage(uint32_t *sizeOut);
   void returnFrameBufferStorage();
   uint8_t *lendBuildStorage(uint32_t *sizeOut) {
@@ -98,7 +98,7 @@ public:
   void composeGrayscaleArgb(uint32_t *dst, bool inverted) const;
 
 private:
-  std::array<uint8_t, BUFFER_SIZE> frameBuffer{};
+  mutable std::array<uint8_t, BUFFER_SIZE> frameBuffer{};
   std::array<uint8_t, BUFFER_SIZE> bwBase{};
   std::array<uint8_t, BUFFER_SIZE> lsbPlane{};
   std::array<uint8_t, BUFFER_SIZE> msbPlane{};
