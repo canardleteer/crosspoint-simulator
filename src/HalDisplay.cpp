@@ -3,6 +3,7 @@
 #ifdef CROSSPOINT_SIM_GRPC
 #include "sim_grpc/session_client.h"
 #endif
+#include "sim_host_log.h"
 
 #include <GfxRenderer.h>
 #include <SDL.h>
@@ -110,16 +111,16 @@ bool saveRendererBmp(const std::string &path) {
   int height = 0;
   if (SDL_GetRendererOutputSize(sdl_renderer, &width, &height) != 0 ||
       width <= 0 || height <= 0) {
-    std::cerr << "[SIM] Cannot determine screenshot size: " << SDL_GetError()
-              << std::endl;
+    simHostLog(SIM_HOST_ERROR, "display",
+               "[SIM] Cannot determine screenshot size: %s\n", SDL_GetError());
     return false;
   }
 
   std::vector<uint32_t> pixels(static_cast<size_t>(width) * height);
   if (SDL_RenderReadPixels(sdl_renderer, nullptr, SDL_PIXELFORMAT_ARGB8888,
                            pixels.data(), width * sizeof(uint32_t)) != 0) {
-    std::cerr << "[SIM] Cannot read screenshot pixels: " << SDL_GetError()
-              << std::endl;
+    simHostLog(SIM_HOST_ERROR, "display",
+               "[SIM] Cannot read screenshot pixels: %s\n", SDL_GetError());
     return false;
   }
 
@@ -127,17 +128,19 @@ bool saveRendererBmp(const std::string &path) {
       pixels.data(), width, height, 32, width * sizeof(uint32_t),
       SDL_PIXELFORMAT_ARGB8888);
   if (!surface) {
-    std::cerr << "[SIM] Cannot create screenshot surface: " << SDL_GetError()
-              << std::endl;
+    simHostLog(SIM_HOST_ERROR, "display",
+               "[SIM] Cannot create screenshot surface: %s\n", SDL_GetError());
     return false;
   }
 
   const bool saved = SDL_SaveBMP(surface, path.c_str()) == 0;
   if (!saved) {
-    std::cerr << "[SIM] Cannot save screenshot " << path << ": "
-              << SDL_GetError() << std::endl;
+    simHostLog(SIM_HOST_ERROR, "display",
+               "[SIM] Cannot save screenshot %s: %s\n", path.c_str(),
+               SDL_GetError());
   } else {
-    std::cerr << "[SIM] Saved screenshot: " << path << std::endl;
+    simHostLog(SIM_HOST_INFO, "display", "[SIM] Saved screenshot: %s\n",
+               path.c_str());
   }
   SDL_FreeSurface(surface);
   return saved;

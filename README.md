@@ -152,6 +152,19 @@ pio run -e simulator -t run_simulator
 
 When the simulator is on the sleep screen, pressing any mapped simulator key wakes it. Under the hood the simulator relaunches itself and reports a synthetic power-button wake, because the native build has no real ESP deep-sleep resume path.
 
+## Session gRPC client (alpha)
+
+An optional grpc++ client can dial a host `Session` listener so a
+process such as
+[crosspoint-simulator-mcp](https://github.com/canardleteer/crosspoint-simulator-mcp)
+can inject keys, observe input, and request PNG snapshots. Default
+builds do not compile this path. Linux is the only current test host.
+
+See [docs/grpc-client.md](docs/grpc-client.md) for flags, threading,
+and the payload map. Compile and history rules are in
+[AGENTS.md](AGENTS.md#session-client). The `.proto` files live in the
+MCP repository, not in this tree.
+
 ## Automated QA and screenshots
 
 Two optional environment variables make repeatable navigation and screenshot

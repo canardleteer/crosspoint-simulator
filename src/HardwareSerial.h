@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdio>
+#include <cstring>
 #include <iostream>
 
 #include "Arduino.h"
@@ -35,10 +36,20 @@ public:
   template <typename... Args> void printf(const char *format, Args... args) {
     if constexpr (sizeof...(Args) == 0) {
       std::cerr << format;
+#ifdef CROSSPOINT_SIM_GRPC
+      if (format) {
+        SimGrpc::teeFirmwareBytes(
+            reinterpret_cast<const uint8_t *>(format), std::strlen(format));
+      }
+#endif
     } else {
       char buf[256];
       snprintf(buf, sizeof(buf), format, args...);
       std::cerr << buf;
+#ifdef CROSSPOINT_SIM_GRPC
+      SimGrpc::teeFirmwareBytes(reinterpret_cast<const uint8_t *>(buf),
+                                std::strlen(buf));
+#endif
     }
   }
   operator bool() const { return true; }

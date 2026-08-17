@@ -573,6 +573,56 @@ void flushCapturedSnapshot() {
   enqueue(std::move(msg), true);
 }
 
+bool lineHasTag(const std::string &line, const char *tag) {
+  return line.find(tag) != std::string::npos;
+}
+
+LogSeverity firmwareLineSeverity(const std::string &line) {
+  if (lineHasTag(line, "[ERROR]") || lineHasTag(line, "[ERR]")) {
+    return LogSeverity::LOG_SEVERITY_ERROR;
+  }
+  if (lineHasTag(line, "[WARN]") || lineHasTag(line, "[WRN]")) {
+    return LogSeverity::LOG_SEVERITY_WARN;
+  }
+  if (lineHasTag(line, "[DEBUG]") || lineHasTag(line, "[DBG]")) {
+    return LogSeverity::LOG_SEVERITY_DEBUG;
+  }
+  if (lineHasTag(line, "[INFO]") || lineHasTag(line, "[INF]")) {
+    return LogSeverity::LOG_SEVERITY_INFO;
+  }
+  return LogSeverity::LOG_SEVERITY_INFO;
+}
+
+std::string firmwareLineComponent(const std::string &line) {
+  static const char *kTags[] = {"[ERROR]", "[ERR]",  "[WARN]", "[WRN]",
+                                "[DEBUG]", "[DBG]",  "[INFO]", "[INF]"};
+  size_t pos = std::string::npos;
+  size_t tag_len = 0;
+  for (const char *tag : kTags) {
+    const size_t found = line.find(tag);
+    if (found != std::string::npos &&
+        (pos == std::string::npos || found < pos)) {
+      pos = found;
+      tag_len = std::strlen(tag);
+    }
+  }
+  if (pos == std::string::npos) {
+    return "serial";
+  }
+  size_t i = pos + tag_len;
+  while (i < line.size() && line[i] == ' ') {
+    ++i;
+  }
+  if (i >= line.size() || line[i] != '[') {
+    return "serial";
+  }
+  const size_t end = line.find(']', i + 1);
+  if (end == std::string::npos || end <= i + 1 || end - i - 1 > 32) {
+    return "serial";
+  }
+  return line.substr(i + 1, end - i - 1);
+}
+
 void emitFirmwareLine(const std::string &line) {
   if (!gStarted.load() || line.empty() || !shouldEmit("log")) {
     return;
@@ -580,8 +630,8 @@ void emitFirmwareLine(const std::string &line) {
   LogLine log;
   log.set_seq(gLogSeq.fetch_add(1));
   log.set_type(LogType::LOG_TYPE_FIRMWARE_SERIAL);
-  log.set_severity(LogSeverity::LOG_SEVERITY_INFO);
-  log.set_component("serial");
+  log.set_severity(firmwareLineSeverity(line));
+  log.set_component(firmwareLineComponent(line));
   log.set_text(line);
   SimToServer msg;
   msg.set_seq(gSeq.fetch_add(1));

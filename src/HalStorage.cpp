@@ -1,4 +1,5 @@
 #include "HalStorage.h"
+#include "sim_host_log.h"
 
 #include <dirent.h>
 #include <fcntl.h>
@@ -6,7 +7,6 @@
 #include <unistd.h>
 
 #include <cerrno>
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <limits>
@@ -42,8 +42,8 @@ std::string resolveStoragePath(const char *path) {
     logical = "/";
   }
   if (containsUnsafeSegment(logical)) {
-    fprintf(stderr, "[SIM] rejected unsafe storage path: %s\n",
-            logical.c_str());
+    simHostLog(SIM_HOST_ERROR, "storage",
+               "[SIM] rejected unsafe storage path: %s\n", logical.c_str());
     return {};
   }
   while (!logical.empty() && logical.front() == '/') {
@@ -102,8 +102,9 @@ public:
     // straight through.
     fd = ::open(path.c_str(), flags, 0666);
     if (fd < 0) {
-      fprintf(stderr, "[SIM] open failed: %s (flags=0x%x errno=%d %s)\n",
-              path.c_str(), flags, errno, strerror(errno));
+      simHostLog(SIM_HOST_ERROR, "storage",
+                 "[SIM] open failed: %s (flags=0x%x errno=%d %s)\n",
+                 path.c_str(), flags, errno, strerror(errno));
     }
     return fd >= 0;
   }

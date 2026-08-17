@@ -82,6 +82,13 @@ void finishSnapshotError(uint64_t corr, const char *message);
 void teeFirmwareBytes(const uint8_t *data, size_t size);
 void emitLog(int type, int severity, const char *component, const char *text);
 
+// Proto LogType / LogSeverity values so HAL helpers need not include pb.h.
+constexpr int kLogTypeHostSim = 2;
+constexpr int kLogSeverityDebug = 1;
+constexpr int kLogSeverityInfo = 2;
+constexpr int kLogSeverityWarn = 3;
+constexpr int kLogSeverityError = 4;
+
 } // namespace SimGrpc
 
 #endif
