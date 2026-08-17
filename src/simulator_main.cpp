@@ -1,12 +1,12 @@
 
 #include <SDL.h>
-#include <cstdio>
 #include <unistd.h>
 
 #include "Arduino.h"
 #include "HalGPIO.h"
 #include "SimulatorDisplay.h"
 #include "SimulatorLifecycle.h"
+#include "sim_host_log.h"
 
 #ifdef CROSSPOINT_SIM_GRPC
 #include "sim_grpc/session_client.h"
@@ -23,9 +23,9 @@ int main(int argc, char **argv) {
   if (grpc_enabled) {
     if (!grpc_opts.instance_id.empty() &&
         !SimGrpc::isValidInstanceId(grpc_opts.instance_id)) {
-      std::fprintf(stderr,
-                   "[SIM] --sim-instance-id / CROSSPOINT_SIM_INSTANCE_ID "
-                   "must be 1-64 bytes\n");
+      simHostLog(SIM_HOST_ERROR, "control",
+                 "[SIM] --sim-instance-id / CROSSPOINT_SIM_INSTANCE_ID "
+                 "must be 1-64 bytes\n");
       return 1;
     }
     SimGrpc::start(grpc_opts);

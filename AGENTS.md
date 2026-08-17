@@ -112,6 +112,12 @@ If the change is about **what the simulator does** (Arduino/ESP-IDF gaps, render
 
 ## Session client
 
+How the client is enabled, what it sends and accepts, and how it
+hooks the HAL is in
+[docs/grpc-client.md](docs/grpc-client.md) (alpha). Durable compile
+and history rules are in this section. `.proto` files live in
+[crosspoint-simulator-mcp](https://github.com/canardleteer/crosspoint-simulator-mcp).
+
 An optional grpc++ client can dial a host `Session` listener (plaintext
 gRPC). Default simulator builds must stay unchanged: do not compile or
 link this client unless `-DCROSSPOINT_SIM_GRPC` is set. When compiled

@@ -1,9 +1,9 @@
 #include "HalFrontlight.h"
+#include "sim_host_log.h"
 
 #include <BoardConfig.h>
 
 #include <algorithm>
-#include <iostream>
 
 HalFrontlight &HalFrontlight::getInstance() {
   static HalFrontlight instance;
@@ -16,10 +16,10 @@ void HalFrontlight::begin(uint8_t brightness, uint8_t warmth, bool on) {
   lastBrightness = std::min<uint8_t>(brightness, 100);
   lastWarmth = std::min<uint8_t>(warmth, 100);
   lit = on;
-  std::cerr << "[SIM] X4 Pro frontlight: " << (lit ? "on" : "off")
-            << ", brightness=" << static_cast<unsigned>(lastBrightness)
-            << "%, warmth=" << static_cast<unsigned>(lastWarmth) << "%"
-            << std::endl;
+  simHostLog(SIM_HOST_INFO, "frontlight",
+             "[SIM] X4 Pro frontlight: %s, brightness=%u%%, warmth=%u%%\n",
+             lit ? "on" : "off", static_cast<unsigned>(lastBrightness),
+             static_cast<unsigned>(lastWarmth));
 }
 
 bool HalFrontlight::present() const { return BoardConfig::hasFrontlight(); }
