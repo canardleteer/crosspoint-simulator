@@ -1,9 +1,9 @@
 #include "HalDisplay.h"
 
+#include <BoardConfig.h>
 #include <GfxRenderer.h>
 #include <SDL.h>
 
-#include <array>
 #include <atomic>
 #include <cstdlib>
 #include <cstring>
@@ -24,7 +24,7 @@ static constexpr int SIMULATOR_WINDOW_SCALE = 1;
 // Pixel buffer written by the render task, read by the main thread for
 // SDL_RenderPresent. On macOS, SDL calls must happen on the main thread.
 static uint32_t
-    pixelBuf[HalDisplay::DISPLAY_WIDTH * HalDisplay::DISPLAY_HEIGHT];
+    pixelBuf[BoardConfig::MAX_DISPLAY_WIDTH * BoardConfig::MAX_DISPLAY_HEIGHT];
 static std::mutex pixelBufMutex;
 static std::atomic<bool> pendingPresent{false};
 // Written by HalGPIO::update() (which owns SDL event polling); read by
@@ -35,24 +35,6 @@ static int currentWindowWidth = 0;
 static int currentWindowHeight = 0;
 
 namespace {
-
-struct GrayscalePreviewState {
-  std::array<uint8_t, HalDisplay::BUFFER_SIZE> bwBase{};
-  std::array<uint8_t, HalDisplay::BUFFER_SIZE> lsbPlane{};
-  std::array<uint8_t, HalDisplay::BUFFER_SIZE> msbPlane{};
-  bool bwBaseValid = false;
-  bool lsbValid = false;
-  bool msbValid = false;
-};
-
-constexpr uint8_t kGrayWhite = 255;
-constexpr uint8_t kGrayLight = 200;
-constexpr uint8_t kGrayDark = 96;
-constexpr uint8_t kGrayBlack = 0;
-
-GrayscalePreviewState grayscalePreviewState;
-std::array<uint8_t, HalDisplay::BUFFER_SIZE> frameBufferStorage{};
-bool frameBufferLent = false;
 
 struct ScreenshotEvent {
   unsigned long atMs;
@@ -149,88 +131,6 @@ void captureDueScreenshots() {
   }
 }
 
-uint32_t argbGray(uint8_t level) {
-  return 0xFF000000u | (static_cast<uint32_t>(level) << 16) |
-         (static_cast<uint32_t>(level) << 8) | level;
-}
-
-bool getBit(const uint8_t *buffer, int x, int y) {
-  const int byteIdx = (y * HalDisplay::DISPLAY_WIDTH + x) / 8;
-  const int bitIdx = 7 - (x % 8);
-  return (buffer[byteIdx] & (1 << bitIdx)) != 0;
-}
-
-void renderBwPixels(const uint8_t *fb) {
-  const std::lock_guard<std::mutex> lock(pixelBufMutex);
-  const bool invert = display.isInverted();
-  for (int y = 0; y < HalDisplay::DISPLAY_HEIGHT; y++) {
-    for (int x = 0; x < HalDisplay::DISPLAY_WIDTH; x++) {
-      const bool white = getBit(fb, x, y);
-      pixelBuf[y * HalDisplay::DISPLAY_WIDTH + x] =
-          (white != invert) ? 0xFFFFFFFFu : 0xFF000000u;
-    }
-  }
-  pendingPresent.store(true);
-}
-
-void clearGrayscalePlanes() {
-  grayscalePreviewState.lsbPlane.fill(0);
-  grayscalePreviewState.msbPlane.fill(0);
-  grayscalePreviewState.lsbValid = false;
-  grayscalePreviewState.msbValid = false;
-}
-
-void snapshotBwBase(const uint8_t *fb) {
-  memcpy(grayscalePreviewState.bwBase.data(), fb, HalDisplay::BUFFER_SIZE);
-  grayscalePreviewState.bwBaseValid = true;
-  clearGrayscalePlanes();
-}
-
-void copyPlane(std::array<uint8_t, HalDisplay::BUFFER_SIZE> &dst,
-               const uint8_t *src, bool &valid) {
-  if (!src) {
-    valid = false;
-    dst.fill(0);
-    return;
-  }
-  memcpy(dst.data(), src, HalDisplay::BUFFER_SIZE);
-  valid = true;
-}
-
-void composeGrayscalePreview() {
-  const std::lock_guard<std::mutex> lock(pixelBufMutex);
-  const uint8_t *bwBase = grayscalePreviewState.bwBaseValid
-                              ? grayscalePreviewState.bwBase.data()
-                              : display.getFrameBuffer();
-  for (int y = 0; y < HalDisplay::DISPLAY_HEIGHT; y++) {
-    for (int x = 0; x < HalDisplay::DISPLAY_WIDTH; x++) {
-      const bool baseWhite = getBit(bwBase, x, y);
-      const bool lsbActive =
-          grayscalePreviewState.lsbValid &&
-          getBit(grayscalePreviewState.lsbPlane.data(), x, y);
-      const bool msbActive =
-          grayscalePreviewState.msbValid &&
-          getBit(grayscalePreviewState.msbPlane.data(), x, y);
-
-      uint8_t level = kGrayWhite;
-      if (!baseWhite) {
-        if (msbActive) {
-          level = lsbActive ? kGrayDark : kGrayLight;
-        } else if (lsbActive) {
-          level = kGrayDark;
-        } else {
-          level = kGrayBlack;
-        }
-      }
-
-      if (display.isInverted())
-        level = static_cast<uint8_t>(255 - level);
-      pixelBuf[y * HalDisplay::DISPLAY_WIDTH + x] = argbGray(level);
-    }
-  }
-  pendingPresent.store(true);
-}
-
 } // namespace
 
 static bool isPortraitOrientation(GfxRenderer::Orientation orientation) {
@@ -241,12 +141,10 @@ static bool isPortraitOrientation(GfxRenderer::Orientation orientation) {
 static void getLogicalWindowSize(GfxRenderer::Orientation orientation,
                                  int *width, int *height) {
   const bool isPortrait = isPortraitOrientation(orientation);
-  *width =
-      (isPortrait ? HalDisplay::DISPLAY_HEIGHT : HalDisplay::DISPLAY_WIDTH) *
-      SIMULATOR_WINDOW_SCALE;
-  *height =
-      (isPortrait ? HalDisplay::DISPLAY_WIDTH : HalDisplay::DISPLAY_HEIGHT) *
-      SIMULATOR_WINDOW_SCALE;
+  const int panelW = BoardConfig::ACTIVE.displayWidth;
+  const int panelH = BoardConfig::ACTIVE.displayHeight;
+  *width = (isPortrait ? panelH : panelW) * SIMULATOR_WINDOW_SCALE;
+  *height = (isPortrait ? panelW : panelH) * SIMULATOR_WINDOW_SCALE;
 }
 
 static void applyWindowGeometryIfNeeded(GfxRenderer::Orientation orientation) {
@@ -268,32 +166,34 @@ static void applyWindowGeometryIfNeeded(GfxRenderer::Orientation orientation) {
 HalDisplay::HalDisplay() {}
 HalDisplay::~HalDisplay() {}
 
-#if defined(SIMULATOR_DISPLAY_UC8179)
-#define SIMULATOR_CONTROLLER_TITLE "UC8179"
-#elif defined(SIMULATOR_DISPLAY_UC8279)
-#define SIMULATOR_CONTROLLER_TITLE "UC8279"
-#else
-#define SIMULATOR_CONTROLLER_TITLE "SSD1677"
-#endif
-
-#if defined(SIMULATOR_DEVICE_STICKY)
-static constexpr const char *WINDOW_TITLE =
-    "Simulator - Seeed Sticky (SSD1677)";
-#elif defined(SIMULATOR_DEVICE_X4_PRO)
-static constexpr const char *WINDOW_TITLE =
-    "Simulator - XTEINK X4 Pro (" SIMULATOR_CONTROLLER_TITLE ")";
-#elif defined(SIMULATOR_DEVICE_X3)
-#if defined(SIMULATOR_DISPLAY_UC8279)
-static constexpr const char *WINDOW_TITLE = "Simulator - XTEINK X3 (UC8279d)";
-#else
-static constexpr const char *WINDOW_TITLE = "Simulator - XTEINK X3 (UC8253)";
-#endif
-#else
-static constexpr const char *WINDOW_TITLE =
-    "Simulator - XTEINK X4 (" SIMULATOR_CONTROLLER_TITLE ")";
-#endif
-
-#undef SIMULATOR_CONTROLLER_TITLE
+static const char *windowTitle() {
+  using Board = BoardConfig::Board;
+  using DisplayController = BoardConfig::DisplayController;
+  const auto &profile = BoardConfig::ACTIVE;
+  switch (profile.board) {
+  case Board::Sticky:
+    return "Simulator - Seeed Sticky (SSD1677)";
+  case Board::PaperMono:
+    return "Simulator - M5Stack Paper Mono (SSD1677)";
+  case Board::XteinkX4Pro:
+    if (profile.displayController == DisplayController::UC8179)
+      return "Simulator - XTEINK X4 Pro (UC8179)";
+    if (profile.displayController == DisplayController::UC8279)
+      return "Simulator - XTEINK X4 Pro (UC8279)";
+    return "Simulator - XTEINK X4 Pro (SSD1677)";
+  case Board::XteinkX3Uc8279:
+    return "Simulator - XTEINK X3 (UC8279d)";
+  case Board::XteinkX3:
+    return "Simulator - XTEINK X3 (UC8253)";
+  case Board::XteinkX4:
+  default:
+    if (profile.displayController == DisplayController::UC8179)
+      return "Simulator - XTEINK X4 (UC8179)";
+    if (profile.displayController == DisplayController::UC8279)
+      return "Simulator - XTEINK X4 (UC8279)";
+    return "Simulator - XTEINK X4 (SSD1677)";
+  }
+}
 
 void HalDisplay::begin() {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -309,7 +209,7 @@ void HalDisplay::begin() {
 
   // SDL_WINDOW_ALLOW_HIGHDPI lets the renderer use full Retina/HiDPI pixels on
   // macOS so we get crisp 1:1 rendering instead of a blurry upscale.
-  window = SDL_CreateWindow(WINDOW_TITLE, SDL_WINDOWPOS_UNDEFINED,
+  window = SDL_CreateWindow(windowTitle(), SDL_WINDOWPOS_UNDEFINED,
                             SDL_WINDOWPOS_UNDEFINED, winW, winH,
                             SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI);
   sdl_renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
@@ -324,51 +224,25 @@ void HalDisplay::begin() {
   // sizes rather than showing harsh black/white patterns.
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
   texture = SDL_CreateTexture(sdl_renderer, SDL_PIXELFORMAT_ARGB8888,
-                              SDL_TEXTUREACCESS_STREAMING, DISPLAY_WIDTH,
-                              DISPLAY_HEIGHT);
+                              SDL_TEXTUREACCESS_STREAMING, getDisplayWidth(),
+                              getDisplayHeight());
 }
 
 void HalDisplay::begin(bool /*seamless*/) { begin(); }
 
 void HalDisplay::clearScreen(uint8_t color) const {
-  memset(getFrameBuffer(), color, BUFFER_SIZE);
+  einkDisplay.clearScreen(color);
 }
 
 void HalDisplay::drawImage(const uint8_t *imageData, uint16_t x, uint16_t y,
-                           uint16_t w, uint16_t h, bool) const {
-  uint8_t *fb = getFrameBuffer();
-  const uint16_t imageWidthBytes = w / 8;
-  for (uint16_t row = 0; row < h; row++) {
-    const uint16_t destY = y + row;
-    if (destY >= DISPLAY_HEIGHT)
-      break;
-    const uint16_t destOffset = destY * DISPLAY_WIDTH_BYTES + (x / 8);
-    const uint16_t srcOffset = row * imageWidthBytes;
-    for (uint16_t col = 0; col < imageWidthBytes; col++) {
-      if ((x / 8 + col) >= DISPLAY_WIDTH_BYTES)
-        break;
-      fb[destOffset + col] = imageData[srcOffset + col];
-    }
-  }
+                           uint16_t w, uint16_t h, bool fromProgmem) const {
+  einkDisplay.drawImage(imageData, x, y, w, h, fromProgmem);
 }
 
 void HalDisplay::drawImageTransparent(const uint8_t *imageData, uint16_t x,
                                       uint16_t y, uint16_t w, uint16_t h,
-                                      bool) const {
-  uint8_t *fb = getFrameBuffer();
-  const uint16_t imageWidthBytes = w / 8;
-  for (uint16_t row = 0; row < h; row++) {
-    const uint16_t destY = y + row;
-    if (destY >= DISPLAY_HEIGHT)
-      break;
-    const uint16_t destOffset = destY * DISPLAY_WIDTH_BYTES + (x / 8);
-    const uint16_t srcOffset = row * imageWidthBytes;
-    for (uint16_t col = 0; col < imageWidthBytes; col++) {
-      if ((x / 8 + col) >= DISPLAY_WIDTH_BYTES)
-        break;
-      fb[destOffset + col] &= imageData[srcOffset + col];
-    }
-  }
+                                      bool fromProgmem) const {
+  einkDisplay.drawImageTransparent(imageData, x, y, w, h, fromProgmem);
 }
 
 void HalDisplay::setInverted(bool value) { inverted = value; }
@@ -404,9 +278,10 @@ void HalDisplay::displayWindow(int, int, int, int) {
 // Called from the render task (background thread): convert framebuffer to
 // pixels and flag for present.
 void HalDisplay::refreshDisplay(RefreshMode /*mode*/, bool /*turnOffScreen*/) {
-  const uint8_t *fb = getFrameBuffer();
-  snapshotBwBase(fb);
-  renderBwPixels(fb);
+  einkDisplay.snapshotBwBase();
+  const std::lock_guard<std::mutex> lock(pixelBufMutex);
+  einkDisplay.composeBwArgb(pixelBuf, inverted);
+  pendingPresent.store(true);
 }
 
 // Called from the main thread (simulator_main.cpp) to push pixels to SDL.
@@ -425,7 +300,7 @@ void HalDisplay::presentIfNeeded() {
   {
     const std::lock_guard<std::mutex> lock(pixelBufMutex);
     SDL_UpdateTexture(texture, nullptr, pixelBuf,
-                      DISPLAY_WIDTH * sizeof(uint32_t));
+                      getDisplayWidth() * sizeof(uint32_t));
   }
   SDL_RenderClear(sdl_renderer);
 
@@ -440,29 +315,31 @@ void HalDisplay::presentIfNeeded() {
   switch (orientation) {
   case GfxRenderer::Portrait: {
     // dst centre = window centre, landscape-sized panel texture.
-    SDL_Rect dst = {(DISPLAY_HEIGHT - DISPLAY_WIDTH) / 2,
-                    DISPLAY_WIDTH / 2 - DISPLAY_HEIGHT / 2, DISPLAY_WIDTH,
-                    DISPLAY_HEIGHT};
+    const int panelW = getDisplayWidth();
+    const int panelH = getDisplayHeight();
+    SDL_Rect dst = {(panelH - panelW) / 2, panelW / 2 - panelH / 2, panelW,
+                    panelH};
     SDL_RenderCopyEx(sdl_renderer, texture, nullptr, &dst, 90.0, nullptr,
                      SDL_FLIP_NONE);
     break;
   }
   case GfxRenderer::PortraitInverted: {
-    SDL_Rect dst = {(DISPLAY_HEIGHT - DISPLAY_WIDTH) / 2,
-                    DISPLAY_WIDTH / 2 - DISPLAY_HEIGHT / 2, DISPLAY_WIDTH,
-                    DISPLAY_HEIGHT};
+    const int panelW = getDisplayWidth();
+    const int panelH = getDisplayHeight();
+    SDL_Rect dst = {(panelH - panelW) / 2, panelW / 2 - panelH / 2, panelW,
+                    panelH};
     SDL_RenderCopyEx(sdl_renderer, texture, nullptr, &dst, -90.0, nullptr,
                      SDL_FLIP_NONE);
     break;
   }
   case GfxRenderer::LandscapeClockwise: {
-    SDL_Rect dst = {0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT};
+    SDL_Rect dst = {0, 0, getDisplayWidth(), getDisplayHeight()};
     SDL_RenderCopyEx(sdl_renderer, texture, nullptr, &dst, 180.0, nullptr,
                      SDL_FLIP_NONE);
     break;
   }
   default: {
-    SDL_Rect dst = {0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT};
+    SDL_Rect dst = {0, 0, getDisplayWidth(), getDisplayHeight()};
     SDL_RenderCopy(sdl_renderer, texture, nullptr, &dst);
     break;
   }
@@ -479,91 +356,71 @@ bool HalDisplay::shouldQuit() const { return quitRequested.load(); }
 void HalDisplay::deepSleep() { presentIfNeeded(); }
 
 uint8_t *HalDisplay::getFrameBuffer() const {
-  if (frameBufferLent) {
-    return nullptr;
-  }
-  return frameBufferStorage.data();
+  return einkDisplay.getFrameBuffer();
 }
 
 uint8_t *HalDisplay::lendFrameBufferStorage(uint32_t *sizeOut) {
-  if (sizeOut) {
-    *sizeOut = frameBufferLent ? 0 : BUFFER_SIZE;
-  }
-  if (frameBufferLent) {
-    return nullptr;
-  }
-  frameBufferLent = true;
-  return frameBufferStorage.data();
+  return einkDisplay.lendFrameBufferStorage(sizeOut);
 }
 
 void HalDisplay::returnFrameBufferStorage() {
-  if (!frameBufferLent) {
-    return;
-  }
-  frameBufferStorage.fill(0xFF);
-  frameBufferLent = false;
+  einkDisplay.returnFrameBufferStorage();
 }
 
 void HalDisplay::copyGrayscaleBuffers(const uint8_t *lsbBuffer,
                                       const uint8_t *msbBuffer) {
-  copyGrayscaleLsbBuffers(lsbBuffer);
-  copyGrayscaleMsbBuffers(msbBuffer);
+  einkDisplay.copyGrayscaleBuffers(lsbBuffer, msbBuffer);
 }
 void HalDisplay::displayGrayscaleBase(RefreshMode fallback,
                                       bool turnOffScreen) {
+  if (einkDisplay.combinesGrayscaleBase()) {
+    einkDisplay.snapshotBwBase();
+    return;
+  }
   displayBuffer(fallback, turnOffScreen);
 }
 void HalDisplay::preconditionGrayscale() {}
 void HalDisplay::preconditionGrayscale(uint16_t, uint16_t, uint16_t, uint16_t) {
 }
 void HalDisplay::copyGrayscaleLsbBuffers(const uint8_t *lsbBuffer) {
-  copyPlane(grayscalePreviewState.lsbPlane, lsbBuffer,
-            grayscalePreviewState.lsbValid);
+  einkDisplay.copyGrayscaleLsbBuffers(lsbBuffer);
 }
 void HalDisplay::copyGrayscaleMsbBuffers(const uint8_t *msbBuffer) {
-  copyPlane(grayscalePreviewState.msbPlane, msbBuffer,
-            grayscalePreviewState.msbValid);
+  einkDisplay.copyGrayscaleMsbBuffers(msbBuffer);
 }
 void HalDisplay::cleanupGrayscaleBuffers(const uint8_t *bwBuffer) {
-  if (bwBuffer) {
-    snapshotBwBase(bwBuffer);
-  } else {
-    grayscalePreviewState.bwBaseValid = false;
-    grayscalePreviewState.bwBase.fill(0);
-    clearGrayscalePlanes();
-  }
+  einkDisplay.cleanupGrayscaleBuffers(bwBuffer);
 }
 void HalDisplay::displayGrayBuffer(bool, const unsigned char *, bool) {
-  composeGrayscalePreview();
+  const std::lock_guard<std::mutex> lock(pixelBufMutex);
+  einkDisplay.composeGrayscaleArgb(pixelBuf, inverted);
+  pendingPresent.store(true);
 }
 
 void HalDisplay::writeGrayscalePlaneStrip(bool lsbPlane, const uint8_t *rows,
                                           uint16_t yStart, uint16_t numRows) {
-  if (!rows || numRows == 0 || yStart >= DISPLAY_HEIGHT) {
-    return;
-  }
-
-  const uint16_t rowsToCopy =
-      (yStart + numRows > DISPLAY_HEIGHT) ? (DISPLAY_HEIGHT - yStart) : numRows;
-  const size_t offset = static_cast<size_t>(yStart) * DISPLAY_WIDTH_BYTES;
-  const size_t byteCount =
-      static_cast<size_t>(rowsToCopy) * DISPLAY_WIDTH_BYTES;
-  auto &plane = lsbPlane ? grayscalePreviewState.lsbPlane
-                         : grayscalePreviewState.msbPlane;
-  memcpy(plane.data() + offset, rows, byteCount);
-  if (lsbPlane) {
-    grayscalePreviewState.lsbValid = true;
-  } else {
-    grayscalePreviewState.msbValid = true;
-  }
+  einkDisplay.writeGrayscalePlaneStrip(lsbPlane ? EInkDisplay::GRAY_PLANE_LSB
+                                                : EInkDisplay::GRAY_PLANE_MSB,
+                                       rows, yStart, numRows);
 }
-bool HalDisplay::supportsStripGrayscale() const { return true; }
+bool HalDisplay::supportsStripGrayscale() const {
+  return einkDisplay.supportsStripGrayscale();
+}
+bool HalDisplay::combinesGrayscaleBase() const {
+  return einkDisplay.combinesGrayscaleBase();
+}
 
-uint16_t HalDisplay::getDisplayWidth() const { return DISPLAY_WIDTH; }
-uint16_t HalDisplay::getDisplayHeight() const { return DISPLAY_HEIGHT; }
+uint16_t HalDisplay::getDisplayWidth() const {
+  return einkDisplay.getDisplayWidth();
+}
+uint16_t HalDisplay::getDisplayHeight() const {
+  return einkDisplay.getDisplayHeight();
+}
 uint16_t HalDisplay::getDisplayWidthBytes() const {
-  return DISPLAY_WIDTH_BYTES;
+  return einkDisplay.getDisplayWidthBytes();
 }
-uint32_t HalDisplay::getBufferSize() const { return BUFFER_SIZE; }
+uint32_t HalDisplay::getBufferSize() const {
+  return einkDisplay.getBufferSize();
+}
 
 HalDisplay display;

@@ -1,5 +1,6 @@
 #pragma once
 #include <Arduino.h>
+#include <BoardConfig.h>
 #include <EInkDisplay.h>
 
 class HalDisplay {
@@ -22,10 +23,10 @@ public:
   void begin(bool seamless);
 
   // Display dimensions
-  static constexpr uint16_t DISPLAY_WIDTH = EInkDisplay::DISPLAY_WIDTH;
-  static constexpr uint16_t DISPLAY_HEIGHT = EInkDisplay::DISPLAY_HEIGHT;
+  static constexpr uint16_t DISPLAY_WIDTH = BoardConfig::MAX_DISPLAY_WIDTH;
+  static constexpr uint16_t DISPLAY_HEIGHT = BoardConfig::MAX_DISPLAY_HEIGHT;
   static constexpr uint16_t DISPLAY_WIDTH_BYTES = DISPLAY_WIDTH / 8;
-  static constexpr uint32_t BUFFER_SIZE = DISPLAY_WIDTH_BYTES * DISPLAY_HEIGHT;
+  static constexpr uint32_t BUFFER_SIZE = BoardConfig::MAX_FRAMEBUFFER_BYTES;
 
   // Frame buffer operations
   void clearScreen(uint8_t color = 0xFF) const;
@@ -85,6 +86,7 @@ public:
   void writeGrayscalePlaneStrip(bool lsbPlane, const uint8_t *rows,
                                 uint16_t yStart, uint16_t numRows);
   bool supportsStripGrayscale() const;
+  bool combinesGrayscaleBase() const;
 
   // Simulator only: call from main thread to push rendered pixels to SDL.
   void presentIfNeeded();
@@ -92,7 +94,7 @@ public:
   bool shouldQuit() const;
 
 private:
-  EInkDisplay einkDisplay;
+  mutable EInkDisplay einkDisplay;
   bool inverted = false;
 };
 

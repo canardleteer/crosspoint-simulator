@@ -1,4 +1,6 @@
 #pragma once
+#include <BoardConfig.h>
+#include <array>
 #include <cstdint>
 #ifndef EPD_SCLK
 #define EPD_SCLK 0
@@ -21,42 +23,72 @@
 
 class EInkDisplay {
 public:
-  // X3: 3.7" panel, 3:2 aspect ratio, ~257 ppi (792×528 landscape buffer)
-  // X4 / X4 Pro: 4.3" panel, 5:3 aspect ratio, ~217 ppi
-  // (800×480 landscape buffer)
-#if defined(SIMULATOR_DEVICE_X3)
-  static constexpr uint16_t DISPLAY_WIDTH = 792;
-  static constexpr uint16_t DISPLAY_HEIGHT = 528;
-#else
-  static constexpr uint16_t DISPLAY_WIDTH = 800;
-  static constexpr uint16_t DISPLAY_HEIGHT = 480;
-#endif
+  // Compile-time maxima for the devices in this binary. Live geometry is
+  // BoardConfig::ACTIVE; a dual X3+X4 build allocates the larger panel.
+  static constexpr uint16_t DISPLAY_WIDTH = BoardConfig::MAX_DISPLAY_WIDTH;
+  static constexpr uint16_t DISPLAY_HEIGHT = BoardConfig::MAX_DISPLAY_HEIGHT;
+  static constexpr uint16_t DISPLAY_WIDTH_BYTES = DISPLAY_WIDTH / 8;
+  static constexpr uint32_t BUFFER_SIZE = BoardConfig::MAX_FRAMEBUFFER_BYTES;
 
   enum RefreshMode { FULL_REFRESH, HALF_REFRESH, FAST_REFRESH };
+  enum GrayPlane { GRAY_PLANE_LSB, GRAY_PLANE_MSB };
 
   EInkDisplay() = default;
   EInkDisplay(int, int, int, int, int, int) {}
   void begin() {}
-  void clearScreen(uint8_t color) {}
+  void clearScreen(uint8_t color);
   void drawImage(const uint8_t *imageData, uint16_t x, uint16_t y, uint16_t w,
-                 uint16_t h, bool fromProgmem = false) {}
+                 uint16_t h, bool fromProgmem = false);
   void drawImageTransparent(const uint8_t *imageData, uint16_t x, uint16_t y,
-                            uint16_t w, uint16_t h, bool fromProgmem = false) {}
+                            uint16_t w, uint16_t h, bool fromProgmem = false);
   void displayBuffer(RefreshMode mode, bool turnOffScreen) {}
   void refreshDisplay(RefreshMode mode, bool turnOffScreen) {}
   void deepSleep() {}
-  uint8_t *getFrameBuffer() {
-    static uint8_t buf[DISPLAY_WIDTH * DISPLAY_HEIGHT / 8];
-    return buf;
+
+  uint8_t *getFrameBuffer();
+  const uint8_t *getFrameBuffer() const;
+  uint8_t *lendFrameBufferStorage(uint32_t *sizeOut);
+  void returnFrameBufferStorage();
+  bool isFrameBufferLent() const { return frameBufferLent; }
+
+  uint16_t getDisplayWidth() const { return BoardConfig::ACTIVE.displayWidth; }
+  uint16_t getDisplayHeight() const { return BoardConfig::ACTIVE.displayHeight; }
+  uint16_t getDisplayWidthBytes() const {
+    return BoardConfig::ACTIVE.displayWidth / 8;
   }
-  void copyGrayscaleBuffers(const uint8_t *lsbBuffer,
-                            const uint8_t *msbBuffer) {}
-  void copyGrayscaleLsbBuffers(const uint8_t *lsbBuffer) {}
-  void copyGrayscaleMsbBuffers(const uint8_t *msbBuffer) {}
-  void cleanupGrayscaleBuffers(const uint8_t *bwBuffer) {}
+  uint32_t getBufferSize() const {
+    return static_cast<uint32_t>(getDisplayWidthBytes()) * getDisplayHeight();
+  }
+
+  void copyGrayscaleBuffers(const uint8_t *lsbBuffer, const uint8_t *msbBuffer);
+  void copyGrayscaleLsbBuffers(const uint8_t *lsbBuffer);
+  void copyGrayscaleMsbBuffers(const uint8_t *msbBuffer);
+  void cleanupGrayscaleBuffers(const uint8_t *bwBuffer);
   void displayGrayBuffer(bool turnOffScreen = false,
                          const unsigned char *lut = nullptr,
                          bool factoryMode = false) {}
+  void writeGrayscalePlaneStrip(GrayPlane plane, const uint8_t *rows,
+                                uint16_t yStart, uint16_t numRows);
+  bool supportsStripGrayscale() const { return true; }
+  bool combinesGrayscaleBase() const { return BoardConfig::isPaperMono(); }
+  void snapshotBwBase();
+  void composeBwArgb(uint32_t *dst, bool inverted) const;
+  void composeGrayscaleArgb(uint32_t *dst, bool inverted) const;
+
+private:
+  std::array<uint8_t, BUFFER_SIZE> frameBuffer{};
+  std::array<uint8_t, BUFFER_SIZE> bwBase{};
+  std::array<uint8_t, BUFFER_SIZE> lsbPlane{};
+  std::array<uint8_t, BUFFER_SIZE> msbPlane{};
+  bool bwBaseValid = false;
+  bool lsbValid = false;
+  bool msbValid = false;
+  bool frameBufferLent = false;
+
+  static bool getBit(const uint8_t *buffer, int x, int y);
+  void copyPlane(std::array<uint8_t, BUFFER_SIZE> &dst, const uint8_t *src,
+                 bool &valid);
+  void clearGrayscalePlanes();
 };
 
 // Stub LUTs - unused in simulator but must exist so GfxRenderer.cpp compiles.
