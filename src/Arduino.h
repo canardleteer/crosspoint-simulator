@@ -7,6 +7,7 @@
 #include <cstdarg>
 #include <cstdint>
 #include <cstdlib>
+#include <cstring>
 #include <string>
 #include <thread>
 
@@ -17,6 +18,13 @@
 #define RTC_NOINIT_ATTR
 #define PGM_P const char *
 #define PSTR(s) (s)
+// Host has no flash-distinct-from-RAM. AVR Arduino maps memcpy_P to a
+// PROGMEM read; here it is memcpy. AnimatedGIF (a default simulator
+// lib_dep) and opt-in native JPEGDEC both call memcpy_P — without this
+// the native link fails even when CROSSPOINT_SIM_USE_NATIVE_DECODERS is off.
+#ifndef memcpy_P
+#define memcpy_P memcpy
+#endif
 
 inline unsigned long millis() {
   using namespace std::chrono;
