@@ -38,6 +38,23 @@ inline void yield() { std::this_thread::yield(); }
 // Native builds have no GPIO pins. Treat every input as released, matching the
 // idle pull-up state used by the button diagnostics in firmware startup.
 inline int digitalRead(int /*pin*/) { return 1; }
+inline void digitalWrite(int /*pin*/, int /*level*/) {}
+inline void pinMode(int /*pin*/, int /*mode*/) {}
+#ifndef HIGH
+#define HIGH 1
+#endif
+#ifndef LOW
+#define LOW 0
+#endif
+#ifndef INPUT
+#define INPUT 0
+#endif
+#ifndef OUTPUT
+#define OUTPUT 1
+#endif
+#ifndef INPUT_PULLUP
+#define INPUT_PULLUP 2
+#endif
 
 #include "HardwareSerial.h"
 #include "Print.h"
