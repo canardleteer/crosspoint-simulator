@@ -222,8 +222,10 @@ def _parse_grpc_pkgconfig(target_env):
     except Exception:
         return
     extra = []
-    pc = os.path.join(libdir, "pkgconfig", "grpc++.pc")
-    if os.path.isfile(pc):
+    for pc_name in ("grpc++.pc", "grpc.pc"):
+        pc = os.path.join(libdir, "pkgconfig", pc_name)
+        if not os.path.isfile(pc):
+            continue
         for line in open(pc, encoding="utf-8"):
             if line.startswith("Libs.private:"):
                 extra.extend(
@@ -236,11 +238,32 @@ def _parse_grpc_pkgconfig(target_env):
             os.path.join(libdir, f"lib{name}.so")
         ):
             extra.append(name)
-    if extra:
-        target_env.Append(LIBS=extra)
-        target_env.Append(LIBPATH=[libdir])
+    # Dedup, keep order. PIO copies library LIBS onto the program link;
+    # LINKFLAGS on this env often never reach `program`.
+    seen = set()
+    libs = []
+    for name in extra:
+        if name not in seen:
+            seen.add(name)
+            libs.append(name)
     if libdir:
-        target_env.Append(LINKFLAGS=[f"-Wl,-rpath,{libdir}"])
+        print("[SIM] Session link search %s" % libdir)
+        libs.extend(
+            [
+                "-L%s" % libdir,
+                "-Wl,-rpath,%s" % libdir,
+                "-Wl,-rpath-link,%s" % libdir,
+            ]
+        )
+        target_env.Append(LIBPATH=[libdir])
+        target_env.Append(
+            LINKFLAGS=[
+                "-Wl,-rpath,%s" % libdir,
+                "-Wl,-rpath-link,%s" % libdir,
+            ]
+        )
+    if libs:
+        target_env.Append(LIBS=libs)
 
 
 def _enable_session_client():
