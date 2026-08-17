@@ -126,8 +126,11 @@ On connect the worker sends `Register` first:
 
 - `instance_id` (configured or generated)
 - `board_id` / `controller` from `BoardConfig`
-- panel `width` / `height`
+  (`x4`, `x3`, `x4_pro`, `sticky`, `paper_mono`)
+- panel `width` / `height` from the **active** board profile
 - `cap_touch`, `cap_home`, `cap_frontlight`
+  (`cap_frontlight` is `BoardConfig::hasFrontlight()`: any style,
+  including Paper Mono's PMIC, not PWM-only)
 - `pid`, and `version` when `CROSSPOINT_VERSION` is defined
 
 Then, about once a second after register, `Heartbeat` with

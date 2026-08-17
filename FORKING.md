@@ -77,14 +77,14 @@ Conflicts should be rare, and keeping them rare is mostly under your control:
 
 - **Keep your diff small and additive.** Stubs for fork-only HAL methods are usually one-line no-ops. Add them next to the existing methods rather than reorganizing the class.
 - **Do not reformat.** A whitespace or clang-format sweep across a `Hal*.cpp` file will conflict with every upstream change to that file, forever.
-- **Do not touch the shared internals unless you mean to.** The SDL main-thread split in `HalDisplay.cpp`, the POSIX fd handling in `HalStorage.cpp`, and the shutdown path in `simulator_main.cpp` all encode fixes for subtle bugs. See [docs/simulator-context.md](docs/simulator-context.md) before changing any of them. If you do find a real bug there, fix it upstream and merge it back down rather than carrying a local patch.
+- **Do not touch the shared internals unless you mean to.** The SDL main-thread split in `EInkDisplay.cpp` / `SimulatorDisplay.cpp`, the POSIX fd handling in `HalStorage.cpp`, and the shutdown path in `simulator_main.cpp` all encode fixes for subtle bugs. See [docs/simulator-context.md](docs/simulator-context.md) before changing any of them. If you do find a real bug there, fix it upstream and merge it back down rather than carrying a local patch.
 
 ## The most common breakage
 
 When your firmware adds a HAL method and calls it, the simulator fails to link until a matching stub exists. The linker error names the missing symbol. Add the declaration to the corresponding `Hal*.h` and a definition to the matching `Hal*.cpp`, mirroring your firmware's signature exactly. Most are one-line no-ops:
 
 ```cpp
-// src/HalDisplay.cpp
+// src/compat_hal/HalDisplay.cpp (or the firmware TU when that file compiles)
 void HalDisplay::setDitherMode(int) {}
 ```
 

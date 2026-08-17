@@ -101,6 +101,8 @@ const char *boardId() {
     return "x4_pro";
   case BoardConfig::Board::Sticky:
     return "sticky";
+  case BoardConfig::Board::PaperMono:
+    return "paper_mono";
   case BoardConfig::Board::XteinkX4:
   default:
     return "x4";

@@ -91,7 +91,7 @@ pio run -e simulator -t run_simulator
 
 ### Match upstream HAL surface (2026-04-06 onward)
 
-- [HalDisplay](../src/HalDisplay.cpp) gained `getDisplayWidth/Height/WidthBytes/getBufferSize` runtime accessors and an `extern HalDisplay display;` global definition.
+- [HalDisplay](../src/compat_hal/HalDisplay.cpp) gained `getDisplayWidth/Height/WidthBytes/getBufferSize` runtime accessors and an `extern HalDisplay display;` global definition. SDL present later moved to [SimulatorDisplay](../src/SimulatorDisplay.cpp); the compatibility `HalDisplay` forwards to `EInkDisplay`.
 - [HalGPIO](../src/HalGPIO.cpp) added `startDeepSleep()` and `verifyPowerButtonWakeup()` no-ops, plus the `extern HalGPIO gpio;` global.
 - [WiFi.h](../src/WiFi.h) added `SSID(int)`, `RSSI(int)`, `encryptionType(int)`, `setSleep`, `getHostname`, `softAPgetStationNum`, `scanComplete`, etc. — anything new the firmware calls needs a stub here.
 
@@ -144,7 +144,7 @@ After any of the storage / cache fixes: `rm -rf ./fs_/.crosspoint/` to drop stal
 
 ## Known Remaining Work
 
-- SDL window size now follows orientation changes at present time; keep resize and `SDL_RenderSetLogicalSize` on the main-thread `presentIfNeeded()` path. The library build hook patches the common `GfxRenderer::setOrientation()` implementation so consuming repos notify `HalDisplay` without a manual source edit.
+- SDL window size now follows orientation changes at present time; keep resize and `SDL_RenderSetLogicalSize` on the main-thread `SimulatorDisplay::presentIfNeeded()` path, which reads `GfxRenderer` orientation itself.
 - Thread safety relies on `std::recursive_mutex` in `RenderLock`; no broader audit.
 - `HalPowerManager::startDeepSleep` should not trigger on `WakeupReason::Other` — verify if it ever does.
 - Each new HAL method added in upstream firmware will fail to link until a matching stub is added here. Most are one-line no-ops.

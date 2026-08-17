@@ -132,10 +132,13 @@ not require them to build. Do not add ConnectRPC, Connect, or gRPC-Web
 here.
 
 Use a dedicated worker thread. Never call RPC from `simulator_main`,
-`presentIfNeeded`, or `HalGPIO::update`. Drain remote injects on the
-same path as existing synthetic input. `InputAck` is sent only when the
-host set `ack_requested`; do not invent acks. Snapshot capture stays on
-the SDL main thread; encode off that thread.
+`SimulatorDisplay::presentIfNeeded`, or `HalGPIO::update`. Drain remote
+injects on the same path as existing synthetic input. `InputAck` is sent
+only when the host set `ack_requested`; do not invent acks. Snapshot
+capture stays on the SDL main thread; encode off that thread.
+`Register.board_id` is `x4`, `x3`, `x4_pro`, `sticky`, or `paper_mono`.
+`cap_frontlight` follows `BoardConfig::hasFrontlight()` (any style,
+including Paper Mono PMIC).
 
 `--sim-headless` or `CROSSPOINT_SIM_HEADLESS=1` (same truthy rule as
 `CROSSPOINT_SIM_GRPC`) hides the SDL window and drops local keyboard,
