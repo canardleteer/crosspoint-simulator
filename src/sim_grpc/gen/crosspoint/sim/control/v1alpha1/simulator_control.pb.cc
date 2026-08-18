@@ -65,6 +65,8 @@ PROTOBUF_CONSTINIT ::google::protobuf::internal::ReflectionData
         {&::_pbi::kDescriptorMethods, &::descriptor_table_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto, /* tracker*/ nullptr,},
         // ::crosspoint::sim::control::v1alpha1::SetSessionView
         {&::_pbi::kDescriptorMethods, &::descriptor_table_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto, /* tracker*/ nullptr,},
+        // ::crosspoint::sim::control::v1alpha1::UiResult
+        {&::_pbi::kDescriptorMethods, &::descriptor_table_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto, /* tracker*/ nullptr,},
         // ::crosspoint::sim::control::v1alpha1::LogLine
         {&::_pbi::kDescriptorMethods, &::descriptor_table_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto, /* tracker*/ nullptr,},
         // ::crosspoint::sim::control::v1alpha1::Goodbye
@@ -76,6 +78,167 @@ namespace crosspoint {
 namespace sim {
 namespace control {
 namespace v1alpha1 {
+class UiResult::_Internal {
+ public:
+  using HasBits = decltype(::std::declval<UiResult>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+      8 * PROTOBUF_FIELD_OFFSET(UiResult, _impl_._has_bits_);
+};
+
+constexpr UiResult::ParseTableT_ UiResult::InternalGenerateParseTable_(const ::_pbi::ClassData* class_data) {
+  return ParseTableT_{
+    {
+      PROTOBUF_FIELD_OFFSET(UiResult, _impl_._has_bits_),
+      0, // no _extensions_
+      3, 24,  // max_field_number, fast_idx_mask
+      offsetof(ParseTableT_, field_lookup_table),
+      4294967288,  // skipmap
+      offsetof(ParseTableT_, field_entries),
+      3,  // num_field_entries
+      0,  // num_aux_entries
+      offsetof(ParseTableT_, field_names),  // no aux_entries
+      class_data,
+      nullptr,  // post_loop_handler
+      ::_pbi::TcParser::GenericFallback,  // fallback
+      #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+      ::_pbi::TcParser::GetTable<::crosspoint::sim::control::v1alpha1::UiResult>(),  // to_prefetch
+      #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+    }, {{
+      {::_pbi::TcParser::MiniParse, {}},
+      // bool painted = 1 [json_name = "painted"];
+      {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(UiResult, _impl_.painted_), 2>(),
+       {8, 2, 0,
+        PROTOBUF_FIELD_OFFSET(UiResult, _impl_.painted_)}},
+      // uint64 generation = 2 [json_name = "generation"];
+      {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(UiResult, _impl_.generation_), 1>(),
+       {16, 1, 0,
+        PROTOBUF_FIELD_OFFSET(UiResult, _impl_.generation_)}},
+      // string activity = 3 [json_name = "activity"];
+      {::_pbi::TcParser::FastUS1,
+       {26, 0, 0,
+        PROTOBUF_FIELD_OFFSET(UiResult, _impl_.activity_)}},
+    }}, {{
+      65535, 65535
+    }}, {{
+      // bool painted = 1 [json_name = "painted"];
+      {PROTOBUF_FIELD_OFFSET(UiResult, _impl_.painted_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+      // uint64 generation = 2 [json_name = "generation"];
+      {PROTOBUF_FIELD_OFFSET(UiResult, _impl_.generation_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt64)},
+      // string activity = 3 [json_name = "activity"];
+      {PROTOBUF_FIELD_OFFSET(UiResult, _impl_.activity_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    }},
+    // no aux_entries
+    {{
+      "\50\0\0\10\0\0\0\0"
+      "crosspoint.sim.control.v1alpha1.UiResult"
+      "activity"
+    }},
+  };
+}
+
+
+inline constexpr UiResult::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        activity_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        generation_{::uint64_t{0u}},
+        painted_{false} {}
+
+template <typename>
+constexpr UiResult::UiResult(::_pbi::ConstantInitialized,
+                       const ::_pbi::ClassData* PROTOBUF_NONNULL class_data)
+    : ::google::protobuf::Message(
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          class_data
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          ),
+      _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
+}
+inline void* PROTOBUF_NONNULL UiResult::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) UiResult(arena);
+}
+constexpr auto UiResult::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(UiResult), alignof(UiResult));
+}
+constexpr auto UiResult::InternalGenerateClassData_(
+    const MessageLite& prototype,
+    const ::google::protobuf::internal::TcParseTableBase* tc_table) {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &prototype,
+#ifndef PROTOBUF_MESSAGE_GLOBALS
+          &_table_.header,
+#else
+          tc_table,
+#endif
+          nullptr,  // IsInitialized
+          &UiResult::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<UiResult>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &UiResult::SharedDtor,
+          ::google::protobuf::Message::GetClearImpl<UiResult>(), &UiResult::ByteSizeLong,
+              &UiResult::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(UiResult, _impl_._cached_size_),
+          false,
+      },
+#ifdef PROTOBUF_MESSAGE_GLOBALS
+      &file_reflection_data[18],
+#else   // !PROTOBUF_MESSAGE_GLOBALS
+      &::_pbi::kDescriptorMethods,
+      &descriptor_table_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto,
+      nullptr,  // tracker
+#endif  // PROTOBUF_MESSAGE_GLOBALS
+  };
+}
+struct UiResultGlobalsTypeInternal : ::_pbi::MessageGlobalsBase {
+  constexpr UiResultGlobalsTypeInternal()
+      :
+#ifndef PROTOBUF_MESSAGE_GLOBALS
+        _default(::_pbi::ConstantInitialized{},
+                 UiResult_class_data_.base())
+#else   // !PROTOBUF_MESSAGE_GLOBALS
+        MessageGlobalsBase(UiResult::InternalGenerateClassData_(
+            _default, &UiResult_globals_._table.header)),
+        _default(::_pbi::ConstantInitialized{}, GetClassData()),
+        _table(::_pbi::PrivateAccess::GenerateParseTable<UiResult>(
+            GetClassData()))
+#endif  // PROTOBUF_MESSAGE_GLOBALS
+  {
+  }
+  ~UiResultGlobalsTypeInternal() {}
+  union {
+    alignas(::_pbi::kMaxMessageAlignment) UiResult _default;
+  };
+#ifdef PROTOBUF_MESSAGE_GLOBALS
+  decltype(::_pbi::PrivateAccess::GenerateParseTable<UiResult>(
+      ::std::declval<const ::_pbi::ClassData*>())) _table;
+#endif
+};
+#ifdef PROTOBUF_MESSAGE_GLOBALS
+static_assert(PROTOBUF_FIELD_OFFSET(UiResultGlobalsTypeInternal, _default) ==
+              ::_pbi::MessageGlobalsBase::OffsetToDefault());
+#endif  // PROTOBUF_MESSAGE_GLOBALS
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 PROTOBUF_MESSAGE_GLOBALS_CONST UiResultGlobalsTypeInternal UiResult_globals_
+        PROTOBUF_MESSAGE_GLOBALS_SECTION(.data.rel.ro);
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+namespace {
+const ::_pbi::ClassData* UiResult_get_class_data() {
+#ifdef PROTOBUF_MESSAGE_GLOBALS
+  return UiResult_globals_.GetClassData();
+#else
+  return UiResult_class_data_.base();
+#endif  // PROTOBUF_MESSAGE_GLOBALS
+}
+}  // namespace
+#endif  // PROTOBUF_CUSTOM_VTABLE
 class TouchEdge::_Internal {
  public:
   using HasBits = decltype(::std::declval<TouchEdge>()._impl_._has_bits_);
@@ -1362,7 +1525,7 @@ constexpr auto LogLine::InternalGenerateClassData_(
           false,
       },
 #ifdef PROTOBUF_MESSAGE_GLOBALS
-      &file_reflection_data[18],
+      &file_reflection_data[19],
 #else   // !PROTOBUF_MESSAGE_GLOBALS
       &::_pbi::kDescriptorMethods,
       &descriptor_table_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto,
@@ -1731,11 +1894,11 @@ constexpr InjectTouch::ParseTableT_ InjectTouch::InternalGenerateParseTable_(con
     {
       PROTOBUF_FIELD_OFFSET(InjectTouch, _impl_._has_bits_),
       0, // no _extensions_
-      3, 24,  // max_field_number, fast_idx_mask
+      4, 24,  // max_field_number, fast_idx_mask
       offsetof(ParseTableT_, field_lookup_table),
-      4294967288,  // skipmap
+      4294967280,  // skipmap
       offsetof(ParseTableT_, field_entries),
-      3,  // num_field_entries
+      4,  // num_field_entries
       0,  // num_aux_entries
       offsetof(ParseTableT_, field_names),  // no aux_entries
       class_data,
@@ -1745,7 +1908,10 @@ constexpr InjectTouch::ParseTableT_ InjectTouch::InternalGenerateParseTable_(con
       ::_pbi::TcParser::GetTable<::crosspoint::sim::control::v1alpha1::InjectTouch>(),  // to_prefetch
       #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
     }, {{
-      {::_pbi::TcParser::MiniParse, {}},
+      // .crosspoint.sim.control.v1alpha1.CoordinateSpace coordinate_space = 4 [json_name = "coordinateSpace"];
+      {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(InjectTouch, _impl_.coordinate_space_), 3>(),
+       {32, 3, 0,
+        PROTOBUF_FIELD_OFFSET(InjectTouch, _impl_.coordinate_space_)}},
       // uint32 kind = 1 [json_name = "kind"];
       {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(InjectTouch, _impl_.kind_), 0>(),
        {8, 0, 0,
@@ -1767,6 +1933,8 @@ constexpr InjectTouch::ParseTableT_ InjectTouch::InternalGenerateParseTable_(con
       {PROTOBUF_FIELD_OFFSET(InjectTouch, _impl_.x_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
       // uint32 y = 3 [json_name = "y"];
       {PROTOBUF_FIELD_OFFSET(InjectTouch, _impl_.y_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+      // .crosspoint.sim.control.v1alpha1.CoordinateSpace coordinate_space = 4 [json_name = "coordinateSpace"];
+      {PROTOBUF_FIELD_OFFSET(InjectTouch, _impl_.coordinate_space_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kOpenEnum)},
     }},
     // no aux_entries
     {{
@@ -1781,7 +1949,8 @@ inline constexpr InjectTouch::Impl_::Impl_(
       : _cached_size_{0},
         kind_{0u},
         x_{0u},
-        y_{0u} {}
+        y_{0u},
+        coordinate_space_{static_cast< ::crosspoint::sim::control::v1alpha1::CoordinateSpace >(0)} {}
 
 template <typename>
 constexpr InjectTouch::InjectTouch(::_pbi::ConstantInitialized,
@@ -1887,11 +2056,11 @@ constexpr InjectSwipe::ParseTableT_ InjectSwipe::InternalGenerateParseTable_(con
     {
       PROTOBUF_FIELD_OFFSET(InjectSwipe, _impl_._has_bits_),
       0, // no _extensions_
-      5, 56,  // max_field_number, fast_idx_mask
+      6, 56,  // max_field_number, fast_idx_mask
       offsetof(ParseTableT_, field_lookup_table),
-      4294967264,  // skipmap
+      4294967232,  // skipmap
       offsetof(ParseTableT_, field_entries),
-      5,  // num_field_entries
+      6,  // num_field_entries
       0,  // num_aux_entries
       offsetof(ParseTableT_, field_names),  // no aux_entries
       class_data,
@@ -1922,7 +2091,10 @@ constexpr InjectSwipe::ParseTableT_ InjectSwipe::InternalGenerateParseTable_(con
       {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(InjectSwipe, _impl_.duration_ms_), 4>(),
        {40, 4, 0,
         PROTOBUF_FIELD_OFFSET(InjectSwipe, _impl_.duration_ms_)}},
-      {::_pbi::TcParser::MiniParse, {}},
+      // .crosspoint.sim.control.v1alpha1.CoordinateSpace coordinate_space = 6 [json_name = "coordinateSpace"];
+      {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(InjectSwipe, _impl_.coordinate_space_), 5>(),
+       {48, 5, 0,
+        PROTOBUF_FIELD_OFFSET(InjectSwipe, _impl_.coordinate_space_)}},
       {::_pbi::TcParser::MiniParse, {}},
     }}, {{
       65535, 65535
@@ -1937,6 +2109,8 @@ constexpr InjectSwipe::ParseTableT_ InjectSwipe::InternalGenerateParseTable_(con
       {PROTOBUF_FIELD_OFFSET(InjectSwipe, _impl_.end_y_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
       // uint32 duration_ms = 5 [json_name = "durationMs"];
       {PROTOBUF_FIELD_OFFSET(InjectSwipe, _impl_.duration_ms_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+      // .crosspoint.sim.control.v1alpha1.CoordinateSpace coordinate_space = 6 [json_name = "coordinateSpace"];
+      {PROTOBUF_FIELD_OFFSET(InjectSwipe, _impl_.coordinate_space_), _Internal::kHasBitsOffset + 5, 0, (0 | ::_fl::kFcOptional | ::_fl::kOpenEnum)},
     }},
     // no aux_entries
     {{
@@ -1953,7 +2127,8 @@ inline constexpr InjectSwipe::Impl_::Impl_(
         start_y_{0u},
         end_x_{0u},
         end_y_{0u},
-        duration_ms_{0u} {}
+        duration_ms_{0u},
+        coordinate_space_{static_cast< ::crosspoint::sim::control::v1alpha1::CoordinateSpace >(0)} {}
 
 template <typename>
 constexpr InjectSwipe::InjectSwipe(::_pbi::ConstantInitialized,
@@ -2635,11 +2810,11 @@ constexpr Heartbeat::ParseTableT_ Heartbeat::InternalGenerateParseTable_(const :
     {
       PROTOBUF_FIELD_OFFSET(Heartbeat, _impl_._has_bits_),
       0, // no _extensions_
-      3, 24,  // max_field_number, fast_idx_mask
+      7, 56,  // max_field_number, fast_idx_mask
       offsetof(ParseTableT_, field_lookup_table),
-      4294967288,  // skipmap
+      4294967168,  // skipmap
       offsetof(ParseTableT_, field_entries),
-      3,  // num_field_entries
+      7,  // num_field_entries
       0,  // num_aux_entries
       offsetof(ParseTableT_, field_names),  // no aux_entries
       class_data,
@@ -2651,29 +2826,56 @@ constexpr Heartbeat::ParseTableT_ Heartbeat::InternalGenerateParseTable_(const :
     }, {{
       {::_pbi::TcParser::MiniParse, {}},
       // uint64 framebuffer_generation = 1 [json_name = "framebufferGeneration"];
-      {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(Heartbeat, _impl_.framebuffer_generation_), 0>(),
-       {8, 0, 0,
+      {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(Heartbeat, _impl_.framebuffer_generation_), 1>(),
+       {8, 1, 0,
         PROTOBUF_FIELD_OFFSET(Heartbeat, _impl_.framebuffer_generation_)}},
       // bool inject_enabled = 2 [json_name = "injectEnabled"];
-      {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(Heartbeat, _impl_.inject_enabled_), 1>(),
-       {16, 1, 0,
+      {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(Heartbeat, _impl_.inject_enabled_), 2>(),
+       {16, 2, 0,
         PROTOBUF_FIELD_OFFSET(Heartbeat, _impl_.inject_enabled_)}},
       // bool headless = 3 [json_name = "headless"];
-      {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(Heartbeat, _impl_.headless_), 2>(),
-       {24, 2, 0,
+      {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(Heartbeat, _impl_.headless_), 3>(),
+       {24, 3, 0,
         PROTOBUF_FIELD_OFFSET(Heartbeat, _impl_.headless_)}},
+      // string activity = 4 [json_name = "activity"];
+      {::_pbi::TcParser::FastUS1,
+       {34, 0, 0,
+        PROTOBUF_FIELD_OFFSET(Heartbeat, _impl_.activity_)}},
+      // int32 reader_spine = 5 [json_name = "readerSpine"];
+      {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(Heartbeat, _impl_.reader_spine_), 4>(),
+       {40, 4, 0,
+        PROTOBUF_FIELD_OFFSET(Heartbeat, _impl_.reader_spine_)}},
+      // int32 reader_page = 6 [json_name = "readerPage"];
+      {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(Heartbeat, _impl_.reader_page_), 5>(),
+       {48, 5, 0,
+        PROTOBUF_FIELD_OFFSET(Heartbeat, _impl_.reader_page_)}},
+      // uint32 orientation = 7 [json_name = "orientation"];
+      {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(Heartbeat, _impl_.orientation_), 6>(),
+       {56, 6, 0,
+        PROTOBUF_FIELD_OFFSET(Heartbeat, _impl_.orientation_)}},
     }}, {{
       65535, 65535
     }}, {{
       // uint64 framebuffer_generation = 1 [json_name = "framebufferGeneration"];
-      {PROTOBUF_FIELD_OFFSET(Heartbeat, _impl_.framebuffer_generation_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt64)},
+      {PROTOBUF_FIELD_OFFSET(Heartbeat, _impl_.framebuffer_generation_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt64)},
       // bool inject_enabled = 2 [json_name = "injectEnabled"];
-      {PROTOBUF_FIELD_OFFSET(Heartbeat, _impl_.inject_enabled_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+      {PROTOBUF_FIELD_OFFSET(Heartbeat, _impl_.inject_enabled_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
       // bool headless = 3 [json_name = "headless"];
-      {PROTOBUF_FIELD_OFFSET(Heartbeat, _impl_.headless_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+      {PROTOBUF_FIELD_OFFSET(Heartbeat, _impl_.headless_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+      // string activity = 4 [json_name = "activity"];
+      {PROTOBUF_FIELD_OFFSET(Heartbeat, _impl_.activity_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+      // int32 reader_spine = 5 [json_name = "readerSpine"];
+      {PROTOBUF_FIELD_OFFSET(Heartbeat, _impl_.reader_spine_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+      // int32 reader_page = 6 [json_name = "readerPage"];
+      {PROTOBUF_FIELD_OFFSET(Heartbeat, _impl_.reader_page_), _Internal::kHasBitsOffset + 5, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+      // uint32 orientation = 7 [json_name = "orientation"];
+      {PROTOBUF_FIELD_OFFSET(Heartbeat, _impl_.orientation_), _Internal::kHasBitsOffset + 6, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
     }},
     // no aux_entries
     {{
+      "\51\0\0\0\10\0\0\0"
+      "crosspoint.sim.control.v1alpha1.Heartbeat"
+      "activity"
     }},
   };
 }
@@ -2683,9 +2885,15 @@ inline constexpr Heartbeat::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
     ::_pbi::ConstantInitialized) noexcept
       : _cached_size_{0},
+        activity_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
         framebuffer_generation_{::uint64_t{0u}},
         inject_enabled_{false},
-        headless_{false} {}
+        headless_{false},
+        reader_spine_{0},
+        reader_page_{0},
+        orientation_{0u} {}
 
 template <typename>
 constexpr Heartbeat::Heartbeat(::_pbi::ConstantInitialized,
@@ -2703,7 +2911,7 @@ inline void* PROTOBUF_NONNULL Heartbeat::PlacementNew_(
   return ::new (mem) Heartbeat(arena);
 }
 constexpr auto Heartbeat::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(Heartbeat), alignof(Heartbeat));
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(Heartbeat), alignof(Heartbeat));
 }
 constexpr auto Heartbeat::InternalGenerateClassData_(
     const MessageLite& prototype,
@@ -2874,7 +3082,7 @@ constexpr auto Goodbye::InternalGenerateClassData_(
           false,
       },
 #ifdef PROTOBUF_MESSAGE_GLOBALS
-      &file_reflection_data[19],
+      &file_reflection_data[20],
 #else   // !PROTOBUF_MESSAGE_GLOBALS
       &::_pbi::kDescriptorMethods,
       &descriptor_table_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto,
@@ -2937,11 +3145,11 @@ constexpr SetSessionView::ParseTableT_ SetSessionView::InternalGenerateParseTabl
     {
       PROTOBUF_FIELD_OFFSET(SetSessionView, _impl_._has_bits_),
       0, // no _extensions_
-      1, 0,  // max_field_number, fast_idx_mask
+      2, 8,  // max_field_number, fast_idx_mask
       offsetof(ParseTableT_, field_lookup_table),
-      4294967294,  // skipmap
+      4294967292,  // skipmap
       offsetof(ParseTableT_, field_entries),
-      1,  // num_field_entries
+      2,  // num_field_entries
       1,  // num_aux_entries
       offsetof(ParseTableT_, aux_entries),
       class_data,
@@ -2951,15 +3159,21 @@ constexpr SetSessionView::ParseTableT_ SetSessionView::InternalGenerateParseTabl
       ::_pbi::TcParser::GetTable<::crosspoint::sim::control::v1alpha1::SetSessionView>(),  // to_prefetch
       #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
     }, {{
+      // repeated string exclude_log_components = 2 [json_name = "excludeLogComponents"];
+      {::_pbi::TcParser::FastUR1,
+       {18, 0, 0,
+        PROTOBUF_FIELD_OFFSET(SetSessionView, _impl_.exclude_log_components_)}},
       // .google.protobuf.FieldMask read_mask = 1 [json_name = "readMask"];
       {::_pbi::TcParser::FastMtS1,
-       {10, 0, 0,
+       {10, 1, 0,
         PROTOBUF_FIELD_OFFSET(SetSessionView, _impl_.read_mask_)}},
     }}, {{
       65535, 65535
     }}, {{
       // .google.protobuf.FieldMask read_mask = 1 [json_name = "readMask"];
-      {PROTOBUF_FIELD_OFFSET(SetSessionView, _impl_.read_mask_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
+      {PROTOBUF_FIELD_OFFSET(SetSessionView, _impl_.read_mask_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
+      // repeated string exclude_log_components = 2 [json_name = "excludeLogComponents"];
+      {PROTOBUF_FIELD_OFFSET(SetSessionView, _impl_.exclude_log_components_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcRepeated | ::_fl::kUtf8String | ::_fl::kRepSString)},
     }},
     {{
         #ifndef PROTOBUF_MESSAGE_GLOBALS
@@ -2969,6 +3183,9 @@ constexpr SetSessionView::ParseTableT_ SetSessionView::InternalGenerateParseTabl
         #endif
     }},
     {{
+      "\56\0\26\0\0\0\0\0"
+      "crosspoint.sim.control.v1alpha1.SetSessionView"
+      "exclude_log_components"
     }},
   };
 }
@@ -2978,6 +3195,11 @@ inline constexpr SetSessionView::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
     ::_pbi::ConstantInitialized) noexcept
       : _cached_size_{0},
+        exclude_log_components_ { visibility, ::_pbi::InternalMetadataOffset::Build<
+            ::crosspoint::sim::control::v1alpha1::SetSessionView,
+            PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::SetSessionView, _impl_.exclude_log_components_)>()
+         }
+        ,
         read_mask_{nullptr} {}
 
 template <typename>
@@ -2996,7 +3218,7 @@ inline void* PROTOBUF_NONNULL SetSessionView::PlacementNew_(
   return ::new (mem) SetSessionView(arena);
 }
 constexpr auto SetSessionView::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(SetSessionView), alignof(SetSessionView));
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(SetSessionView), alignof(SetSessionView));
 }
 constexpr auto SetSessionView::InternalGenerateClassData_(
     const MessageLite& prototype,
@@ -3251,7 +3473,7 @@ const ::_pbi::ClassData* InputObserved_get_class_data() {
 }  // namespace sim
 }  // namespace crosspoint
 static const ::_pb::EnumDescriptor* PROTOBUF_NONNULL
-    file_level_enum_descriptors_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto[3];
+    file_level_enum_descriptors_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto[4];
 static constexpr const ::_pb::ServiceDescriptor* PROTOBUF_NONNULL* PROTOBUF_NULLABLE
     file_level_service_descriptors_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto = nullptr;
 const ::uint32_t
@@ -3282,13 +3504,21 @@ const ::uint32_t
         3,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::Heartbeat, _impl_._has_bits_),
-        6, // hasbit index offset
+        10, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::Heartbeat, _impl_.framebuffer_generation_),
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::Heartbeat, _impl_.inject_enabled_),
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::Heartbeat, _impl_.headless_),
-        0,
+        PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::Heartbeat, _impl_.activity_),
+        PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::Heartbeat, _impl_.reader_spine_),
+        PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::Heartbeat, _impl_.reader_page_),
+        PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::Heartbeat, _impl_.orientation_),
         1,
         2,
+        3,
+        0,
+        4,
+        5,
+        6,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::SnapshotRequest, _impl_._has_bits_),
         9, // hasbit index offset
@@ -3326,13 +3556,15 @@ const ::uint32_t
         0,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::InjectTouch, _impl_._has_bits_),
-        6, // hasbit index offset
+        7, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::InjectTouch, _impl_.kind_),
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::InjectTouch, _impl_.x_),
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::InjectTouch, _impl_.y_),
+        PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::InjectTouch, _impl_.coordinate_space_),
         0,
         1,
         2,
+        3,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::InjectKey, _impl_._has_bits_),
         5, // hasbit index offset
@@ -3347,17 +3579,19 @@ const ::uint32_t
         0,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::InjectSwipe, _impl_._has_bits_),
-        8, // hasbit index offset
+        9, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::InjectSwipe, _impl_.start_x_),
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::InjectSwipe, _impl_.start_y_),
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::InjectSwipe, _impl_.end_x_),
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::InjectSwipe, _impl_.end_y_),
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::InjectSwipe, _impl_.duration_ms_),
+        PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::InjectSwipe, _impl_.coordinate_space_),
         0,
         1,
         2,
         3,
         4,
+        5,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::SetInjectEnabled, _impl_._has_bits_),
         4, // hasbit index offset
@@ -3414,8 +3648,19 @@ const ::uint32_t
         0,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::SetSessionView, _impl_._has_bits_),
-        4, // hasbit index offset
+        5, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::SetSessionView, _impl_.read_mask_),
+        PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::SetSessionView, _impl_.exclude_log_components_),
+        1,
+        0,
+        0x081, // bitmap
+        PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::UiResult, _impl_._has_bits_),
+        6, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::UiResult, _impl_.painted_),
+        PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::UiResult, _impl_.generation_),
+        PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::UiResult, _impl_.activity_),
+        2,
+        1,
         0,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::LogLine, _impl_._has_bits_),
@@ -3441,24 +3686,25 @@ static const ::_pbi::MigrationSchema
     schemas[] ABSL_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
         {0, sizeof(::crosspoint::sim::control::v1alpha1::Register)},
         {23, sizeof(::crosspoint::sim::control::v1alpha1::Heartbeat)},
-        {32, sizeof(::crosspoint::sim::control::v1alpha1::SnapshotRequest)},
-        {47, sizeof(::crosspoint::sim::control::v1alpha1::SnapshotFrame)},
-        {62, sizeof(::crosspoint::sim::control::v1alpha1::SnapshotError)},
-        {67, sizeof(::crosspoint::sim::control::v1alpha1::InjectTouch)},
-        {76, sizeof(::crosspoint::sim::control::v1alpha1::InjectKey)},
-        {83, sizeof(::crosspoint::sim::control::v1alpha1::InjectHome)},
-        {88, sizeof(::crosspoint::sim::control::v1alpha1::InjectSwipe)},
-        {101, sizeof(::crosspoint::sim::control::v1alpha1::SetInjectEnabled)},
-        {106, sizeof(::crosspoint::sim::control::v1alpha1::ShutdownRequest)},
-        {107, sizeof(::crosspoint::sim::control::v1alpha1::InputAck)},
-        {114, sizeof(::crosspoint::sim::control::v1alpha1::InputObserved)},
-        {129, sizeof(::crosspoint::sim::control::v1alpha1::KeyEdge)},
-        {136, sizeof(::crosspoint::sim::control::v1alpha1::TouchEdge)},
-        {145, sizeof(::crosspoint::sim::control::v1alpha1::HomeEdge)},
-        {150, sizeof(::crosspoint::sim::control::v1alpha1::HostEdge)},
-        {155, sizeof(::crosspoint::sim::control::v1alpha1::SetSessionView)},
-        {160, sizeof(::crosspoint::sim::control::v1alpha1::LogLine)},
-        {173, sizeof(::crosspoint::sim::control::v1alpha1::Goodbye)},
+        {40, sizeof(::crosspoint::sim::control::v1alpha1::SnapshotRequest)},
+        {55, sizeof(::crosspoint::sim::control::v1alpha1::SnapshotFrame)},
+        {70, sizeof(::crosspoint::sim::control::v1alpha1::SnapshotError)},
+        {75, sizeof(::crosspoint::sim::control::v1alpha1::InjectTouch)},
+        {86, sizeof(::crosspoint::sim::control::v1alpha1::InjectKey)},
+        {93, sizeof(::crosspoint::sim::control::v1alpha1::InjectHome)},
+        {98, sizeof(::crosspoint::sim::control::v1alpha1::InjectSwipe)},
+        {113, sizeof(::crosspoint::sim::control::v1alpha1::SetInjectEnabled)},
+        {118, sizeof(::crosspoint::sim::control::v1alpha1::ShutdownRequest)},
+        {119, sizeof(::crosspoint::sim::control::v1alpha1::InputAck)},
+        {126, sizeof(::crosspoint::sim::control::v1alpha1::InputObserved)},
+        {141, sizeof(::crosspoint::sim::control::v1alpha1::KeyEdge)},
+        {148, sizeof(::crosspoint::sim::control::v1alpha1::TouchEdge)},
+        {157, sizeof(::crosspoint::sim::control::v1alpha1::HomeEdge)},
+        {162, sizeof(::crosspoint::sim::control::v1alpha1::HostEdge)},
+        {167, sizeof(::crosspoint::sim::control::v1alpha1::SetSessionView)},
+        {174, sizeof(::crosspoint::sim::control::v1alpha1::UiResult)},
+        {183, sizeof(::crosspoint::sim::control::v1alpha1::LogLine)},
+        {196, sizeof(::crosspoint::sim::control::v1alpha1::Goodbye)},
 };
 static const ::_pbi::MessageGlobalsBase* PROTOBUF_NONNULL const
     file_message_globals[] = {
@@ -3480,6 +3726,7 @@ static const ::_pbi::MessageGlobalsBase* PROTOBUF_NONNULL const
         &::crosspoint::sim::control::v1alpha1::HomeEdge_globals_,
         &::crosspoint::sim::control::v1alpha1::HostEdge_globals_,
         &::crosspoint::sim::control::v1alpha1::SetSessionView_globals_,
+        &::crosspoint::sim::control::v1alpha1::UiResult_globals_,
         &::crosspoint::sim::control::v1alpha1::LogLine_globals_,
         &::crosspoint::sim::control::v1alpha1::Goodbye_globals_,
 };
@@ -3495,61 +3742,76 @@ const char descriptor_table_protodef_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsim
     "ap_touch\030\006 \001(\010R\010capTouch\022\031\n\010cap_home\030\007 \001"
     "(\010R\007capHome\022%\n\016cap_frontlight\030\010 \001(\010R\rcap"
     "Frontlight\022\020\n\003pid\030\t \001(\rR\003pid\022\030\n\007version\030"
-    "\n \001(\tR\007version\"\205\001\n\tHeartbeat\0225\n\026framebuf"
+    "\n \001(\tR\007version\"\207\002\n\tHeartbeat\0225\n\026framebuf"
     "fer_generation\030\001 \001(\004R\025framebufferGenerat"
     "ion\022%\n\016inject_enabled\030\002 \001(\010R\rinjectEnabl"
-    "ed\022\032\n\010headless\030\003 \001(\010R\010headless\"\213\001\n\017Snaps"
-    "hotRequest\022\026\n\006region\030\001 \001(\010R\006region\022\014\n\001x\030"
-    "\002 \001(\rR\001x\022\014\n\001y\030\003 \001(\rR\001y\022\024\n\005width\030\004 \001(\rR\005w"
-    "idth\022\026\n\006height\030\005 \001(\rR\006height\022\026\n\006format\030\006"
-    " \001(\rR\006format\"\246\001\n\rSnapshotFrame\022\026\n\006pixels"
-    "\030\001 \001(\014R\006pixels\022\033\n\tmime_type\030\002 \001(\tR\010mimeT"
-    "ype\022\022\n\004hash\030\003 \001(\tR\004hash\022\036\n\ngeneration\030\004 "
-    "\001(\004R\ngeneration\022\024\n\005width\030\005 \001(\rR\005width\022\026\n"
-    "\006height\030\006 \001(\rR\006height\")\n\rSnapshotError\022\030"
-    "\n\007message\030\001 \001(\tR\007message\"=\n\013InjectTouch\022"
-    "\022\n\004kind\030\001 \001(\rR\004kind\022\014\n\001x\030\002 \001(\rR\001x\022\014\n\001y\030\003"
-    " \001(\rR\001y\"8\n\tInjectKey\022\022\n\004name\030\001 \001(\tR\004name"
-    "\022\027\n\007hold_ms\030\002 \001(\rR\006holdMs\"%\n\nInjectHome\022"
-    "\027\n\007hold_ms\030\001 \001(\rR\006holdMs\"\212\001\n\013InjectSwipe"
-    "\022\027\n\007start_x\030\001 \001(\rR\006startX\022\027\n\007start_y\030\002 \001"
-    "(\rR\006startY\022\023\n\005end_x\030\003 \001(\rR\004endX\022\023\n\005end_y"
-    "\030\004 \001(\rR\004endY\022\037\n\013duration_ms\030\005 \001(\rR\ndurat"
-    "ionMs\",\n\020SetInjectEnabled\022\030\n\007enabled\030\001 \001"
-    "(\010R\007enabled\"\021\n\017ShutdownRequest\">\n\010InputA"
-    "ck\022\032\n\010accepted\030\001 \001(\010R\010accepted\022\026\n\006reason"
-    "\030\002 \001(\tR\006reason\"\342\002\n\rInputObserved\022D\n\006sour"
-    "ce\030\001 \001(\0162,.crosspoint.sim.control.v1alph"
-    "a1.InputSourceR\006source\022<\n\003key\030\n \001(\0132(.cr"
-    "osspoint.sim.control.v1alpha1.KeyEdgeH\000R"
-    "\003key\022B\n\005touch\030\013 \001(\0132*.crosspoint.sim.con"
-    "trol.v1alpha1.TouchEdgeH\000R\005touch\022\?\n\004home"
-    "\030\014 \001(\0132).crosspoint.sim.control.v1alpha1"
-    ".HomeEdgeH\000R\004home\022\?\n\004host\030\r \001(\0132).crossp"
-    "oint.sim.control.v1alpha1.HostEdgeH\000R\004ho"
-    "stB\007\n\005event\"1\n\007KeyEdge\022\022\n\004name\030\001 \001(\tR\004na"
-    "me\022\022\n\004down\030\002 \001(\010R\004down\"\?\n\tTouchEdge\022\022\n\004k"
-    "ind\030\001 \001(\rR\004kind\022\016\n\002nx\030\002 \001(\002R\002nx\022\016\n\002ny\030\003 "
-    "\001(\002R\002ny\"\036\n\010HomeEdge\022\022\n\004down\030\001 \001(\010R\004down\""
-    "\036\n\010HostEdge\022\022\n\004kind\030\001 \001(\rR\004kind\"I\n\016SetSe"
-    "ssionView\0227\n\tread_mask\030\001 \001(\0132\032.google.pr"
-    "otobuf.FieldMaskR\010readMask\"\325\001\n\007LogLine\022\020"
-    "\n\003seq\030\001 \001(\004R\003seq\022<\n\004type\030\002 \001(\0162(.crosspo"
-    "int.sim.control.v1alpha1.LogTypeR\004type\022H"
-    "\n\010severity\030\003 \001(\0162,.crosspoint.sim.contro"
-    "l.v1alpha1.LogSeverityR\010severity\022\034\n\tcomp"
-    "onent\030\004 \001(\tR\tcomponent\022\022\n\004text\030\005 \001(\tR\004te"
-    "xt\"!\n\007Goodbye\022\026\n\006reason\030\001 \001(\tR\006reason*u\n"
-    "\013InputSource\022\034\n\030INPUT_SOURCE_UNSPECIFIED"
-    "\020\000\022\026\n\022INPUT_SOURCE_HUMAN\020\001\022\027\n\023INPUT_SOUR"
-    "CE_REMOTE\020\002\022\027\n\023INPUT_SOURCE_SCRIPT\020\003*t\n\007"
-    "LogType\022\030\n\024LOG_TYPE_UNSPECIFIED\020\000\022\034\n\030LOG"
-    "_TYPE_FIRMWARE_SERIAL\020\001\022\025\n\021LOG_TYPE_HOST"
-    "_SIM\020\002\022\032\n\026LOG_TYPE_CONTROL_PLANE\020\003*\211\001\n\013L"
-    "ogSeverity\022\034\n\030LOG_SEVERITY_UNSPECIFIED\020\000"
-    "\022\026\n\022LOG_SEVERITY_DEBUG\020\001\022\025\n\021LOG_SEVERITY"
-    "_INFO\020\002\022\025\n\021LOG_SEVERITY_WARN\020\003\022\026\n\022LOG_SE"
-    "VERITY_ERROR\020\004b\006proto3"
+    "ed\022\032\n\010headless\030\003 \001(\010R\010headless\022\032\n\010activi"
+    "ty\030\004 \001(\tR\010activity\022!\n\014reader_spine\030\005 \001(\005"
+    "R\013readerSpine\022\037\n\013reader_page\030\006 \001(\005R\nread"
+    "erPage\022 \n\013orientation\030\007 \001(\rR\013orientation"
+    "\"\213\001\n\017SnapshotRequest\022\026\n\006region\030\001 \001(\010R\006re"
+    "gion\022\014\n\001x\030\002 \001(\rR\001x\022\014\n\001y\030\003 \001(\rR\001y\022\024\n\005widt"
+    "h\030\004 \001(\rR\005width\022\026\n\006height\030\005 \001(\rR\006height\022\026"
+    "\n\006format\030\006 \001(\rR\006format\"\246\001\n\rSnapshotFrame"
+    "\022\026\n\006pixels\030\001 \001(\014R\006pixels\022\033\n\tmime_type\030\002 "
+    "\001(\tR\010mimeType\022\022\n\004hash\030\003 \001(\tR\004hash\022\036\n\ngen"
+    "eration\030\004 \001(\004R\ngeneration\022\024\n\005width\030\005 \001(\r"
+    "R\005width\022\026\n\006height\030\006 \001(\rR\006height\")\n\rSnaps"
+    "hotError\022\030\n\007message\030\001 \001(\tR\007message\"\232\001\n\013I"
+    "njectTouch\022\022\n\004kind\030\001 \001(\rR\004kind\022\014\n\001x\030\002 \001("
+    "\rR\001x\022\014\n\001y\030\003 \001(\rR\001y\022[\n\020coordinate_space\030\004"
+    " \001(\01620.crosspoint.sim.control.v1alpha1.C"
+    "oordinateSpaceR\017coordinateSpace\"8\n\tInjec"
+    "tKey\022\022\n\004name\030\001 \001(\tR\004name\022\027\n\007hold_ms\030\002 \001("
+    "\rR\006holdMs\"%\n\nInjectHome\022\027\n\007hold_ms\030\001 \001(\r"
+    "R\006holdMs\"\347\001\n\013InjectSwipe\022\027\n\007start_x\030\001 \001("
+    "\rR\006startX\022\027\n\007start_y\030\002 \001(\rR\006startY\022\023\n\005en"
+    "d_x\030\003 \001(\rR\004endX\022\023\n\005end_y\030\004 \001(\rR\004endY\022\037\n\013"
+    "duration_ms\030\005 \001(\rR\ndurationMs\022[\n\020coordin"
+    "ate_space\030\006 \001(\01620.crosspoint.sim.control"
+    ".v1alpha1.CoordinateSpaceR\017coordinateSpa"
+    "ce\",\n\020SetInjectEnabled\022\030\n\007enabled\030\001 \001(\010R"
+    "\007enabled\"\021\n\017ShutdownRequest\">\n\010InputAck\022"
+    "\032\n\010accepted\030\001 \001(\010R\010accepted\022\026\n\006reason\030\002 "
+    "\001(\tR\006reason\"\342\002\n\rInputObserved\022D\n\006source\030"
+    "\001 \001(\0162,.crosspoint.sim.control.v1alpha1."
+    "InputSourceR\006source\022<\n\003key\030\n \001(\0132(.cross"
+    "point.sim.control.v1alpha1.KeyEdgeH\000R\003ke"
+    "y\022B\n\005touch\030\013 \001(\0132*.crosspoint.sim.contro"
+    "l.v1alpha1.TouchEdgeH\000R\005touch\022\?\n\004home\030\014 "
+    "\001(\0132).crosspoint.sim.control.v1alpha1.Ho"
+    "meEdgeH\000R\004home\022\?\n\004host\030\r \001(\0132).crosspoin"
+    "t.sim.control.v1alpha1.HostEdgeH\000R\004hostB"
+    "\007\n\005event\"1\n\007KeyEdge\022\022\n\004name\030\001 \001(\tR\004name\022"
+    "\022\n\004down\030\002 \001(\010R\004down\"\?\n\tTouchEdge\022\022\n\004kind"
+    "\030\001 \001(\rR\004kind\022\016\n\002nx\030\002 \001(\002R\002nx\022\016\n\002ny\030\003 \001(\002"
+    "R\002ny\"\036\n\010HomeEdge\022\022\n\004down\030\001 \001(\010R\004down\"\036\n\010"
+    "HostEdge\022\022\n\004kind\030\001 \001(\rR\004kind\"\177\n\016SetSessi"
+    "onView\0227\n\tread_mask\030\001 \001(\0132\032.google.proto"
+    "buf.FieldMaskR\010readMask\0224\n\026exclude_log_c"
+    "omponents\030\002 \003(\tR\024excludeLogComponents\"`\n"
+    "\010UiResult\022\030\n\007painted\030\001 \001(\010R\007painted\022\036\n\ng"
+    "eneration\030\002 \001(\004R\ngeneration\022\032\n\010activity\030"
+    "\003 \001(\tR\010activity\"\325\001\n\007LogLine\022\020\n\003seq\030\001 \001(\004"
+    "R\003seq\022<\n\004type\030\002 \001(\0162(.crosspoint.sim.con"
+    "trol.v1alpha1.LogTypeR\004type\022H\n\010severity\030"
+    "\003 \001(\0162,.crosspoint.sim.control.v1alpha1."
+    "LogSeverityR\010severity\022\034\n\tcomponent\030\004 \001(\t"
+    "R\tcomponent\022\022\n\004text\030\005 \001(\tR\004text\"!\n\007Goodb"
+    "ye\022\026\n\006reason\030\001 \001(\tR\006reason*u\n\013InputSourc"
+    "e\022\034\n\030INPUT_SOURCE_UNSPECIFIED\020\000\022\026\n\022INPUT"
+    "_SOURCE_HUMAN\020\001\022\027\n\023INPUT_SOURCE_REMOTE\020\002"
+    "\022\027\n\023INPUT_SOURCE_SCRIPT\020\003*m\n\017CoordinateS"
+    "pace\022 \n\034COORDINATE_SPACE_UNSPECIFIED\020\000\022\032"
+    "\n\026COORDINATE_SPACE_PANEL\020\001\022\034\n\030COORDINATE"
+    "_SPACE_LOGICAL\020\002*t\n\007LogType\022\030\n\024LOG_TYPE_"
+    "UNSPECIFIED\020\000\022\034\n\030LOG_TYPE_FIRMWARE_SERIA"
+    "L\020\001\022\025\n\021LOG_TYPE_HOST_SIM\020\002\022\032\n\026LOG_TYPE_C"
+    "ONTROL_PLANE\020\003*\211\001\n\013LogSeverity\022\034\n\030LOG_SE"
+    "VERITY_UNSPECIFIED\020\000\022\026\n\022LOG_SEVERITY_DEB"
+    "UG\020\001\022\025\n\021LOG_SEVERITY_INFO\020\002\022\025\n\021LOG_SEVER"
+    "ITY_WARN\020\003\022\026\n\022LOG_SEVERITY_ERROR\020\004b\006prot"
+    "o3"
 };
 static const ::_pbi::DescriptorTable* PROTOBUF_NONNULL const
     descriptor_table_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto_deps[1] = {
@@ -3559,13 +3821,13 @@ static ::absl::once_flag descriptor_table_crosspoint_2fsim_2fcontrol_2fv1alpha1_
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto = {
     false,
     false,
-    2582,
+    3162,
     descriptor_table_protodef_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto,
     "crosspoint/sim/control/v1alpha1/simulator_control.proto",
     &descriptor_table_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto_once,
     descriptor_table_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto_deps,
     1,
-    20,
+    21,
     schemas,
     file_message_globals,
     TableStruct_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto::offsets,
@@ -3584,16 +3846,23 @@ InputSource_descriptor() {
 PROTOBUF_CONSTINIT const uint32_t InputSource_internal_data_[] = {
     262144u, 0u, };
 [[nodiscard]] const ::google::protobuf::EnumDescriptor* PROTOBUF_NONNULL
-LogType_descriptor() {
+CoordinateSpace_descriptor() {
   ::google::protobuf::internal::AssignDescriptors(&descriptor_table_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto);
   return file_level_enum_descriptors_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto[1];
+}
+PROTOBUF_CONSTINIT const uint32_t CoordinateSpace_internal_data_[] = {
+    196608u, 0u, };
+[[nodiscard]] const ::google::protobuf::EnumDescriptor* PROTOBUF_NONNULL
+LogType_descriptor() {
+  ::google::protobuf::internal::AssignDescriptors(&descriptor_table_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto);
+  return file_level_enum_descriptors_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto[2];
 }
 PROTOBUF_CONSTINIT const uint32_t LogType_internal_data_[] = {
     262144u, 0u, };
 [[nodiscard]] const ::google::protobuf::EnumDescriptor* PROTOBUF_NONNULL
 LogSeverity_descriptor() {
   ::google::protobuf::internal::AssignDescriptors(&descriptor_table_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto);
-  return file_level_enum_descriptors_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto[2];
+  return file_level_enum_descriptors_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto[3];
 }
 PROTOBUF_CONSTINIT const uint32_t LogSeverity_internal_data_[] = {
     327680u, 0u, };
@@ -4082,30 +4351,52 @@ Heartbeat::Heartbeat(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
   SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:crosspoint.sim.control.v1alpha1.Heartbeat)
 }
+PROTOBUF_NDEBUG_INLINE Heartbeat::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+    [[maybe_unused]] const ::crosspoint::sim::control::v1alpha1::Heartbeat& from_msg)
+      : _has_bits_{from._has_bits_},
+        _cached_size_{0},
+        activity_(arena, from.activity_) {}
+
 Heartbeat::Heartbeat(
-    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Heartbeat& from)
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
+    const Heartbeat& from)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(arena, Heartbeat_get_class_data()),
+    : ::google::protobuf::Message(arena, Heartbeat_get_class_data()) {
+
 #else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(arena),
+    : ::google::protobuf::Message(arena) {
 #endif  // PROTOBUF_CUSTOM_VTABLE
-      _impl_(from._impl_) {
+  Heartbeat* const _this = this;
+  (void)_this;
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  ::memcpy(reinterpret_cast<char*>(&_impl_) +
+               offsetof(Impl_, framebuffer_generation_),
+           reinterpret_cast<const char*>(&from._impl_) +
+               offsetof(Impl_, framebuffer_generation_),
+           offsetof(Impl_, orientation_) -
+               offsetof(Impl_, framebuffer_generation_) +
+               sizeof(Impl_::orientation_));
+
+  // @@protoc_insertion_point(copy_constructor:crosspoint.sim.control.v1alpha1.Heartbeat)
 }
 PROTOBUF_NDEBUG_INLINE Heartbeat::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
     [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
-      : _cached_size_{0} {}
+      : _cached_size_{0},
+        activity_(arena) {}
 
 inline void Heartbeat::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
   ::memset(reinterpret_cast<char*>(&_impl_) +
                offsetof(Impl_, framebuffer_generation_),
            0,
-           offsetof(Impl_, headless_) -
+           offsetof(Impl_, orientation_) -
                offsetof(Impl_, framebuffer_generation_) +
-               sizeof(Impl_::headless_));
+               sizeof(Impl_::orientation_));
 }
 Heartbeat::~Heartbeat() {
   // @@protoc_insertion_point(destructor:crosspoint.sim.control.v1alpha1.Heartbeat)
@@ -4118,6 +4409,7 @@ inline void Heartbeat::SharedDtor(MessageLite& self) {
   }
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.activity_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -4155,10 +4447,13 @@ PROTOBUF_NOINLINE void Heartbeat::Clear() {
   (void) cached_has_bits;
 
   cached_has_bits = _impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x00000007U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    _impl_.activity_.ClearNonDefaultToEmpty();
+  }
+  if (BatchCheckHasBit(cached_has_bits, 0x0000007eU)) {
     ::memset(&_impl_.framebuffer_generation_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.headless_) -
-        reinterpret_cast<char*>(&_impl_.framebuffer_generation_)) + sizeof(_impl_.headless_));
+        reinterpret_cast<char*>(&_impl_.orientation_) -
+        reinterpret_cast<char*>(&_impl_.framebuffer_generation_)) + sizeof(_impl_.orientation_));
   }
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
@@ -4184,7 +4479,7 @@ PROTOBUF_NOINLINE void Heartbeat::Clear() {
 
   cached_has_bits = this_._impl_._has_bits_[0];
   // uint64 framebuffer_generation = 1 [json_name = "framebufferGeneration"];
-  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000002U)) {
     if (this_._internal_framebuffer_generation() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
@@ -4193,7 +4488,7 @@ PROTOBUF_NOINLINE void Heartbeat::Clear() {
   }
 
   // bool inject_enabled = 2 [json_name = "injectEnabled"];
-  if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000004U)) {
     if (this_._internal_inject_enabled() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteBoolToArray(
@@ -4202,11 +4497,48 @@ PROTOBUF_NOINLINE void Heartbeat::Clear() {
   }
 
   // bool headless = 3 [json_name = "headless"];
-  if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000008U)) {
     if (this_._internal_headless() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteBoolToArray(
           3, this_._internal_headless(), target);
+    }
+  }
+
+  // string activity = 4 [json_name = "activity"];
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    if (!this_._internal_activity().empty()) {
+      const ::std::string& _s = this_._internal_activity();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "crosspoint.sim.control.v1alpha1.Heartbeat.activity");
+      target = stream->WriteStringMaybeAliased(4, _s, target);
+    }
+  }
+
+  // int32 reader_spine = 5 [json_name = "readerSpine"];
+  if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+    if (this_._internal_reader_spine() != 0) {
+      target =
+          ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<5>(
+              stream, this_._internal_reader_spine(), target);
+    }
+  }
+
+  // int32 reader_page = 6 [json_name = "readerPage"];
+  if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+    if (this_._internal_reader_page() != 0) {
+      target =
+          ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<6>(
+              stream, this_._internal_reader_page(), target);
+    }
+  }
+
+  // uint32 orientation = 7 [json_name = "orientation"];
+  if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+    if (this_._internal_orientation() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
+          7, this_._internal_orientation(), target);
     }
   }
 
@@ -4235,24 +4567,52 @@ PROTOBUF_NOINLINE void Heartbeat::Clear() {
 
   ::_pbi::Prefetch5LinesFrom7Lines(&this_);
   cached_has_bits = this_._impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x00000007U)) {
-    // uint64 framebuffer_generation = 1 [json_name = "framebufferGeneration"];
+  if (BatchCheckHasBit(cached_has_bits, 0x0000007fU)) {
+    // string activity = 4 [json_name = "activity"];
     if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (!this_._internal_activity().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_activity());
+      }
+    }
+    // uint64 framebuffer_generation = 1 [json_name = "framebufferGeneration"];
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
       if (this_._internal_framebuffer_generation() != 0) {
         total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
             this_._internal_framebuffer_generation());
       }
     }
     // bool inject_enabled = 2 [json_name = "injectEnabled"];
-    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
       if (this_._internal_inject_enabled() != 0) {
         total_size += 2;
       }
     }
     // bool headless = 3 [json_name = "headless"];
-    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
       if (this_._internal_headless() != 0) {
         total_size += 2;
+      }
+    }
+    // int32 reader_spine = 5 [json_name = "readerSpine"];
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+      if (this_._internal_reader_spine() != 0) {
+        total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+            this_._internal_reader_spine());
+      }
+    }
+    // int32 reader_page = 6 [json_name = "readerPage"];
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+      if (this_._internal_reader_page() != 0) {
+        total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+            this_._internal_reader_page());
+      }
+    }
+    // uint32 orientation = 7 [json_name = "orientation"];
+    if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+      if (this_._internal_orientation() != 0) {
+        total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+            this_._internal_orientation());
       }
     }
   }
@@ -4273,20 +4633,44 @@ void Heartbeat::MergeImpl(::google::protobuf::MessageLite& to_msg,
   (void)cached_has_bits;
 
   cached_has_bits = from._impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x00000007U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x0000007fU)) {
     if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (!from._internal_activity().empty()) {
+        _this->_internal_set_activity(from._internal_activity());
+      } else {
+        if (_this->_impl_.activity_.IsDefault()) {
+          _this->_internal_set_activity("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
       if (from._internal_framebuffer_generation() != 0) {
         _this->_impl_.framebuffer_generation_ = from._impl_.framebuffer_generation_;
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
       if (from._internal_inject_enabled() != 0) {
         _this->_impl_.inject_enabled_ = from._impl_.inject_enabled_;
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
       if (from._internal_headless() != 0) {
         _this->_impl_.headless_ = from._impl_.headless_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+      if (from._internal_reader_spine() != 0) {
+        _this->_impl_.reader_spine_ = from._impl_.reader_spine_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+      if (from._internal_reader_page() != 0) {
+        _this->_impl_.reader_page_ = from._impl_.reader_page_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+      if (from._internal_orientation() != 0) {
+        _this->_impl_.orientation_ = from._impl_.orientation_;
       }
     }
   }
@@ -4305,11 +4689,14 @@ void Heartbeat::CopyFrom(const Heartbeat& from) {
 
 void Heartbeat::InternalSwap(Heartbeat* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
   using ::std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.activity_, &other->_impl_.activity_, arena);
   ::google::protobuf::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(Heartbeat, _impl_.headless_)
-      + sizeof(Heartbeat::_impl_.headless_)
+      PROTOBUF_FIELD_OFFSET(Heartbeat, _impl_.orientation_)
+      + sizeof(Heartbeat::_impl_.orientation_)
       - PROTOBUF_FIELD_OFFSET(Heartbeat, _impl_.framebuffer_generation_)>(
           reinterpret_cast<char*>(&_impl_.framebuffer_generation_),
           reinterpret_cast<char*>(&other->_impl_.framebuffer_generation_));
@@ -5245,9 +5632,9 @@ inline void InjectTouch::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
   ::memset(reinterpret_cast<char*>(&_impl_) +
                offsetof(Impl_, kind_),
            0,
-           offsetof(Impl_, y_) -
+           offsetof(Impl_, coordinate_space_) -
                offsetof(Impl_, kind_) +
-               sizeof(Impl_::y_));
+               sizeof(Impl_::coordinate_space_));
 }
 InjectTouch::~InjectTouch() {
   // @@protoc_insertion_point(destructor:crosspoint.sim.control.v1alpha1.InjectTouch)
@@ -5297,10 +5684,10 @@ PROTOBUF_NOINLINE void InjectTouch::Clear() {
   (void) cached_has_bits;
 
   cached_has_bits = _impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x00000007U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x0000000fU)) {
     ::memset(&_impl_.kind_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.y_) -
-        reinterpret_cast<char*>(&_impl_.kind_)) + sizeof(_impl_.y_));
+        reinterpret_cast<char*>(&_impl_.coordinate_space_) -
+        reinterpret_cast<char*>(&_impl_.kind_)) + sizeof(_impl_.coordinate_space_));
   }
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
@@ -5352,6 +5739,15 @@ PROTOBUF_NOINLINE void InjectTouch::Clear() {
     }
   }
 
+  // .crosspoint.sim.control.v1alpha1.CoordinateSpace coordinate_space = 4 [json_name = "coordinateSpace"];
+  if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+    if (this_._internal_coordinate_space() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteEnumToArray(
+          4, this_._internal_coordinate_space(), target);
+    }
+  }
+
   if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
     target =
         ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
@@ -5377,7 +5773,7 @@ PROTOBUF_NOINLINE void InjectTouch::Clear() {
 
   ::_pbi::Prefetch5LinesFrom7Lines(&this_);
   cached_has_bits = this_._impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x00000007U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x0000000fU)) {
     // uint32 kind = 1 [json_name = "kind"];
     if (CheckHasBit(cached_has_bits, 0x00000001U)) {
       if (this_._internal_kind() != 0) {
@@ -5399,6 +5795,13 @@ PROTOBUF_NOINLINE void InjectTouch::Clear() {
             this_._internal_y());
       }
     }
+    // .crosspoint.sim.control.v1alpha1.CoordinateSpace coordinate_space = 4 [json_name = "coordinateSpace"];
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+      if (this_._internal_coordinate_space() != 0) {
+        total_size += 1 +
+                      ::_pbi::WireFormatLite::EnumSize(this_._internal_coordinate_space());
+      }
+    }
   }
   return this_.MaybeComputeUnknownFieldsSize(total_size,
                                              &this_._impl_._cached_size_);
@@ -5417,7 +5820,7 @@ void InjectTouch::MergeImpl(::google::protobuf::MessageLite& to_msg,
   (void)cached_has_bits;
 
   cached_has_bits = from._impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x00000007U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x0000000fU)) {
     if (CheckHasBit(cached_has_bits, 0x00000001U)) {
       if (from._internal_kind() != 0) {
         _this->_impl_.kind_ = from._impl_.kind_;
@@ -5431,6 +5834,11 @@ void InjectTouch::MergeImpl(::google::protobuf::MessageLite& to_msg,
     if (CheckHasBit(cached_has_bits, 0x00000004U)) {
       if (from._internal_y() != 0) {
         _this->_impl_.y_ = from._impl_.y_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+      if (from._internal_coordinate_space() != 0) {
+        _this->_impl_.coordinate_space_ = from._impl_.coordinate_space_;
       }
     }
   }
@@ -5452,8 +5860,8 @@ void InjectTouch::InternalSwap(InjectTouch* PROTOBUF_RESTRICT PROTOBUF_NONNULL o
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::google::protobuf::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(InjectTouch, _impl_.y_)
-      + sizeof(InjectTouch::_impl_.y_)
+      PROTOBUF_FIELD_OFFSET(InjectTouch, _impl_.coordinate_space_)
+      + sizeof(InjectTouch::_impl_.coordinate_space_)
       - PROTOBUF_FIELD_OFFSET(InjectTouch, _impl_.kind_)>(
           reinterpret_cast<char*>(&_impl_.kind_),
           reinterpret_cast<char*>(&other->_impl_.kind_));
@@ -5925,9 +6333,9 @@ inline void InjectSwipe::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
   ::memset(reinterpret_cast<char*>(&_impl_) +
                offsetof(Impl_, start_x_),
            0,
-           offsetof(Impl_, duration_ms_) -
+           offsetof(Impl_, coordinate_space_) -
                offsetof(Impl_, start_x_) +
-               sizeof(Impl_::duration_ms_));
+               sizeof(Impl_::coordinate_space_));
 }
 InjectSwipe::~InjectSwipe() {
   // @@protoc_insertion_point(destructor:crosspoint.sim.control.v1alpha1.InjectSwipe)
@@ -5977,10 +6385,10 @@ PROTOBUF_NOINLINE void InjectSwipe::Clear() {
   (void) cached_has_bits;
 
   cached_has_bits = _impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x0000001fU)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x0000003fU)) {
     ::memset(&_impl_.start_x_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.duration_ms_) -
-        reinterpret_cast<char*>(&_impl_.start_x_)) + sizeof(_impl_.duration_ms_));
+        reinterpret_cast<char*>(&_impl_.coordinate_space_) -
+        reinterpret_cast<char*>(&_impl_.start_x_)) + sizeof(_impl_.coordinate_space_));
   }
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
@@ -6050,6 +6458,15 @@ PROTOBUF_NOINLINE void InjectSwipe::Clear() {
     }
   }
 
+  // .crosspoint.sim.control.v1alpha1.CoordinateSpace coordinate_space = 6 [json_name = "coordinateSpace"];
+  if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+    if (this_._internal_coordinate_space() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteEnumToArray(
+          6, this_._internal_coordinate_space(), target);
+    }
+  }
+
   if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
     target =
         ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
@@ -6075,7 +6492,7 @@ PROTOBUF_NOINLINE void InjectSwipe::Clear() {
 
   ::_pbi::Prefetch5LinesFrom7Lines(&this_);
   cached_has_bits = this_._impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x0000001fU)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x0000003fU)) {
     // uint32 start_x = 1 [json_name = "startX"];
     if (CheckHasBit(cached_has_bits, 0x00000001U)) {
       if (this_._internal_start_x() != 0) {
@@ -6111,6 +6528,13 @@ PROTOBUF_NOINLINE void InjectSwipe::Clear() {
             this_._internal_duration_ms());
       }
     }
+    // .crosspoint.sim.control.v1alpha1.CoordinateSpace coordinate_space = 6 [json_name = "coordinateSpace"];
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+      if (this_._internal_coordinate_space() != 0) {
+        total_size += 1 +
+                      ::_pbi::WireFormatLite::EnumSize(this_._internal_coordinate_space());
+      }
+    }
   }
   return this_.MaybeComputeUnknownFieldsSize(total_size,
                                              &this_._impl_._cached_size_);
@@ -6129,7 +6553,7 @@ void InjectSwipe::MergeImpl(::google::protobuf::MessageLite& to_msg,
   (void)cached_has_bits;
 
   cached_has_bits = from._impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x0000001fU)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x0000003fU)) {
     if (CheckHasBit(cached_has_bits, 0x00000001U)) {
       if (from._internal_start_x() != 0) {
         _this->_impl_.start_x_ = from._impl_.start_x_;
@@ -6155,6 +6579,11 @@ void InjectSwipe::MergeImpl(::google::protobuf::MessageLite& to_msg,
         _this->_impl_.duration_ms_ = from._impl_.duration_ms_;
       }
     }
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+      if (from._internal_coordinate_space() != 0) {
+        _this->_impl_.coordinate_space_ = from._impl_.coordinate_space_;
+      }
+    }
   }
   _this->_impl_._has_bits_[0] |= cached_has_bits;
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
@@ -6174,8 +6603,8 @@ void InjectSwipe::InternalSwap(InjectSwipe* PROTOBUF_RESTRICT PROTOBUF_NONNULL o
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::google::protobuf::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(InjectSwipe, _impl_.duration_ms_)
-      + sizeof(InjectSwipe::_impl_.duration_ms_)
+      PROTOBUF_FIELD_OFFSET(InjectSwipe, _impl_.coordinate_space_)
+      + sizeof(InjectSwipe::_impl_.coordinate_space_)
       - PROTOBUF_FIELD_OFFSET(InjectSwipe, _impl_.start_x_)>(
           reinterpret_cast<char*>(&_impl_.start_x_),
           reinterpret_cast<char*>(&other->_impl_.start_x_));
@@ -7977,7 +8406,7 @@ void HostEdge::InternalSwap(HostEdge* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) 
 void SetSessionView::clear_read_mask() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (_impl_.read_mask_ != nullptr) _impl_.read_mask_->Clear();
-  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
 }
 SetSessionView::SetSessionView(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
@@ -7993,7 +8422,14 @@ PROTOBUF_NDEBUG_INLINE SetSessionView::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
     [[maybe_unused]] const ::crosspoint::sim::control::v1alpha1::SetSessionView& from_msg)
       : _has_bits_{from._has_bits_},
-        _cached_size_{0} {}
+        _cached_size_{0},
+        exclude_log_components_ {
+          visibility, ::_pbi::InternalMetadataOffset::Build<
+              ::crosspoint::sim::control::v1alpha1::SetSessionView,
+              PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::SetSessionView, _impl_.exclude_log_components_)>()
+          , from.exclude_log_components_
+        }
+     {}
 
 SetSessionView::SetSessionView(
     ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
@@ -8010,7 +8446,7 @@ SetSessionView::SetSessionView(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
   ::uint32_t cached_has_bits = _impl_._has_bits_[0];
-  _impl_.read_mask_ = (CheckHasBit(cached_has_bits, 0x00000001U))
+  _impl_.read_mask_ = (CheckHasBit(cached_has_bits, 0x00000002U))
                 ? ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.read_mask_)
                 : nullptr;
 
@@ -8019,7 +8455,12 @@ SetSessionView::SetSessionView(
 PROTOBUF_NDEBUG_INLINE SetSessionView::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
     [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
-      : _cached_size_{0} {}
+      : _cached_size_{0},
+        exclude_log_components_ { visibility, ::_pbi::InternalMetadataOffset::Build<
+            ::crosspoint::sim::control::v1alpha1::SetSessionView,
+            PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::SetSessionView, _impl_.exclude_log_components_)>()
+         }
+     {}
 
 inline void SetSessionView::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
@@ -8074,9 +8515,14 @@ PROTOBUF_NOINLINE void SetSessionView::Clear() {
   (void) cached_has_bits;
 
   cached_has_bits = _impl_._has_bits_[0];
-  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
-    ABSL_DCHECK(_impl_.read_mask_ != nullptr);
-    _impl_.read_mask_->Clear();
+  if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      _impl_.exclude_log_components_.Clear();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      ABSL_DCHECK(_impl_.read_mask_ != nullptr);
+      _impl_.read_mask_->Clear();
+    }
   }
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
@@ -8102,10 +8548,20 @@ PROTOBUF_NOINLINE void SetSessionView::Clear() {
 
   cached_has_bits = this_._impl_._has_bits_[0];
   // .google.protobuf.FieldMask read_mask = 1 [json_name = "readMask"];
-  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000002U)) {
     target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
         1, *this_._impl_.read_mask_, this_._impl_.read_mask_->GetCachedSize(), target,
         stream);
+  }
+
+  // repeated string exclude_log_components = 2 [json_name = "excludeLogComponents"];
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    for (int i = 0, n = this_._internal_exclude_log_components_size(); i < n; ++i) {
+      const auto& s = this_._internal_exclude_log_components().Get(i);
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          s.data(), static_cast<int>(s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "crosspoint.sim.control.v1alpha1.SetSessionView.exclude_log_components");
+      target = stream->WriteString(2, s, target);
+    }
   }
 
   if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
@@ -8131,10 +8587,20 @@ PROTOBUF_NOINLINE void SetSessionView::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void)cached_has_bits;
 
-   {
-    // .google.protobuf.FieldMask read_mask = 1 [json_name = "readMask"];
-    cached_has_bits = this_._impl_._has_bits_[0];
+  ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+  cached_has_bits = this_._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
+    // repeated string exclude_log_components = 2 [json_name = "excludeLogComponents"];
     if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      total_size +=
+          1 * ::google::protobuf::internal::FromIntSize(this_._internal_exclude_log_components().size());
+      for (int i = 0, n = this_._internal_exclude_log_components().size(); i < n; ++i) {
+        total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
+            this_._internal_exclude_log_components().Get(i));
+      }
+    }
+    // .google.protobuf.FieldMask read_mask = 1 [json_name = "readMask"];
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
       total_size += 1 +
                     ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.read_mask_);
     }
@@ -8157,12 +8623,19 @@ void SetSessionView::MergeImpl(::google::protobuf::MessageLite& to_msg,
   (void)cached_has_bits;
 
   cached_has_bits = from._impl_._has_bits_[0];
-  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
-    ABSL_DCHECK(from._impl_.read_mask_ != nullptr);
-    if (_this->_impl_.read_mask_ == nullptr) {
-      _this->_impl_.read_mask_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.read_mask_);
-    } else {
-      _this->_impl_.read_mask_->MergeFrom(*from._impl_.read_mask_);
+  if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      _this->_internal_mutable_exclude_log_components()->InternalMergeFromWithArena(
+          ::google::protobuf::MessageLite::internal_visibility(), arena,
+          from._internal_exclude_log_components());
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      ABSL_DCHECK(from._impl_.read_mask_ != nullptr);
+      if (_this->_impl_.read_mask_ == nullptr) {
+        _this->_impl_.read_mask_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.read_mask_);
+      } else {
+        _this->_impl_.read_mask_->MergeFrom(*from._impl_.read_mask_);
+      }
     }
   }
   _this->_impl_._has_bits_[0] |= cached_has_bits;
@@ -8182,10 +8655,293 @@ void SetSessionView::InternalSwap(SetSessionView* PROTOBUF_RESTRICT PROTOBUF_NON
   using ::std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  _impl_.exclude_log_components_.InternalSwap(&other->_impl_.exclude_log_components_);
   swap(_impl_.read_mask_, other->_impl_.read_mask_);
 }
 
 ::google::protobuf::Metadata SetSessionView::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+UiResult::UiResult(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, UiResult_get_class_data()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:crosspoint.sim.control.v1alpha1.UiResult)
+}
+PROTOBUF_NDEBUG_INLINE UiResult::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+    [[maybe_unused]] const ::crosspoint::sim::control::v1alpha1::UiResult& from_msg)
+      : _has_bits_{from._has_bits_},
+        _cached_size_{0},
+        activity_(arena, from.activity_) {}
+
+UiResult::UiResult(
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
+    const UiResult& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, UiResult_get_class_data()) {
+
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  UiResult* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  ::memcpy(reinterpret_cast<char*>(&_impl_) +
+               offsetof(Impl_, generation_),
+           reinterpret_cast<const char*>(&from._impl_) +
+               offsetof(Impl_, generation_),
+           offsetof(Impl_, painted_) -
+               offsetof(Impl_, generation_) +
+               sizeof(Impl_::painted_));
+
+  // @@protoc_insertion_point(copy_constructor:crosspoint.sim.control.v1alpha1.UiResult)
+}
+PROTOBUF_NDEBUG_INLINE UiResult::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+      : _cached_size_{0},
+        activity_(arena) {}
+
+inline void UiResult::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  ::memset(reinterpret_cast<char*>(&_impl_) +
+               offsetof(Impl_, generation_),
+           0,
+           offsetof(Impl_, painted_) -
+               offsetof(Impl_, generation_) +
+               sizeof(Impl_::painted_));
+}
+UiResult::~UiResult() {
+  // @@protoc_insertion_point(destructor:crosspoint.sim.control.v1alpha1.UiResult)
+  SharedDtor(*this);
+}
+inline void UiResult::SharedDtor(MessageLite& self) {
+  UiResult& this_ = static_cast<UiResult&>(self);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.activity_.Destroy();
+  this_._impl_.~Impl_();
+}
+
+#ifndef PROTOBUF_MESSAGE_GLOBALS
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull UiResult_class_data_ =
+        UiResult::InternalGenerateClassData_(UiResult_globals_._default);
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+UiResult::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&UiResult_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(UiResult_class_data_.tc_table);
+  return UiResult_class_data_.base();
+}
+#else
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+UiResult::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&UiResult_globals_);
+  ::google::protobuf::internal::PrefetchToLocalCache(
+      ::google::protobuf::internal::MessageGlobalsBase::ToParseTableBase(&UiResult_globals_));
+  return UiResult_globals_.GetClassData();
+}
+#endif  // !PROTOBUF_MESSAGE_GLOBALS
+#ifndef PROTOBUF_MESSAGE_GLOBALS
+PROTOBUF_CONSTINIT
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const UiResult::ParseTableT_
+    UiResult::_table_ =
+        UiResult::InternalGenerateParseTable_(UiResult_class_data_.base());
+#endif  // !PROTOBUF_MESSAGE_GLOBALS
+PROTOBUF_NOINLINE void UiResult::Clear() {
+// @@protoc_insertion_point(message_clear_start:crosspoint.sim.control.v1alpha1.UiResult)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    _impl_.activity_.ClearNonDefaultToEmpty();
+  }
+  if (BatchCheckHasBit(cached_has_bits, 0x00000006U)) {
+    ::memset(&_impl_.generation_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.painted_) -
+        reinterpret_cast<char*>(&_impl_.generation_)) + sizeof(_impl_.painted_));
+  }
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::uint8_t* PROTOBUF_NONNULL UiResult::_InternalSerialize(
+    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
+  const UiResult& this_ = static_cast<const UiResult&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::uint8_t* PROTOBUF_NONNULL UiResult::_InternalSerialize(
+    ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+  const UiResult& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(serialize_to_array_start:crosspoint.sim.control.v1alpha1.UiResult)
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  // bool painted = 1 [json_name = "painted"];
+  if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+    if (this_._internal_painted() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          1, this_._internal_painted(), target);
+    }
+  }
+
+  // uint64 generation = 2 [json_name = "generation"];
+  if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+    if (this_._internal_generation() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+          2, this_._internal_generation(), target);
+    }
+  }
+
+  // string activity = 3 [json_name = "activity"];
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    if (!this_._internal_activity().empty()) {
+      const ::std::string& _s = this_._internal_activity();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "crosspoint.sim.control.v1alpha1.UiResult.activity");
+      target = stream->WriteStringMaybeAliased(3, _s, target);
+    }
+  }
+
+  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:crosspoint.sim.control.v1alpha1.UiResult)
+  return target;
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::size_t UiResult::ByteSizeLong(const MessageLite& base) {
+  const UiResult& this_ = static_cast<const UiResult&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::size_t UiResult::ByteSizeLong() const {
+  const UiResult& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(message_byte_size_start:crosspoint.sim.control.v1alpha1.UiResult)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void)cached_has_bits;
+
+  ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+  cached_has_bits = this_._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000007U)) {
+    // string activity = 3 [json_name = "activity"];
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (!this_._internal_activity().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_activity());
+      }
+    }
+    // uint64 generation = 2 [json_name = "generation"];
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (this_._internal_generation() != 0) {
+        total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+            this_._internal_generation());
+      }
+    }
+    // bool painted = 1 [json_name = "painted"];
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (this_._internal_painted() != 0) {
+        total_size += 2;
+      }
+    }
+  }
+  return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                             &this_._impl_._cached_size_);
+}
+
+void UiResult::MergeImpl(::google::protobuf::MessageLite& to_msg,
+                      const ::google::protobuf::MessageLite& from_msg) {
+   auto* const _this = static_cast<UiResult*>(&to_msg);
+  auto& from = static_cast<const UiResult&>(from_msg);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    from.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(class_specific_merge_from_start:crosspoint.sim.control.v1alpha1.UiResult)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000007U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (!from._internal_activity().empty()) {
+        _this->_internal_set_activity(from._internal_activity());
+      } else {
+        if (_this->_impl_.activity_.IsDefault()) {
+          _this->_internal_set_activity("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (from._internal_generation() != 0) {
+        _this->_impl_.generation_ = from._impl_.generation_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (from._internal_painted() != 0) {
+        _this->_impl_.painted_ = from._impl_.painted_;
+      }
+    }
+  }
+  _this->_impl_._has_bits_[0] |= cached_has_bits;
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+}
+
+void UiResult::CopyFrom(const UiResult& from) {
+  // @@protoc_insertion_point(class_specific_copy_from_start:crosspoint.sim.control.v1alpha1.UiResult)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void UiResult::InternalSwap(UiResult* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+  using ::std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.activity_, &other->_impl_.activity_, arena);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(UiResult, _impl_.painted_)
+      + sizeof(UiResult::_impl_.painted_)
+      - PROTOBUF_FIELD_OFFSET(UiResult, _impl_.generation_)>(
+          reinterpret_cast<char*>(&_impl_.generation_),
+          reinterpret_cast<char*>(&other->_impl_.generation_));
+}
+
+::google::protobuf::Metadata UiResult::GetMetadata() const {
   return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
 }
 // ===================================================================

@@ -60,6 +60,8 @@ namespace crosspoint {
 namespace sim {
 namespace control {
 namespace v1alpha1 {
+enum CoordinateSpace : int;
+extern const uint32_t CoordinateSpace_internal_data_[];
 enum InputSource : int;
 extern const uint32_t InputSource_internal_data_[];
 enum LogSeverity : int;
@@ -226,12 +228,23 @@ extern const ::google::protobuf::internal::ClassDataFull TouchEdge_class_data_;
 #else
 extern const TouchEdgeGlobalsTypeInternal TouchEdge_globals_;
 #endif  // PROTOBUF_MESSAGE_GLOBALS
+class UiResult;
+struct UiResultGlobalsTypeInternal;
+#ifndef PROTOBUF_MESSAGE_GLOBALS
+extern UiResultGlobalsTypeInternal UiResult_globals_;
+extern const ::google::protobuf::internal::ClassDataFull UiResult_class_data_;
+#else
+extern const UiResultGlobalsTypeInternal UiResult_globals_;
+#endif  // PROTOBUF_MESSAGE_GLOBALS
 }  // namespace v1alpha1
 }  // namespace control
 }  // namespace sim
 }  // namespace crosspoint
 namespace google {
 namespace protobuf {
+template <>
+internal::EnumTraitsT<::crosspoint::sim::control::v1alpha1::CoordinateSpace_internal_data_>
+    internal::EnumTraitsImpl::value<::crosspoint::sim::control::v1alpha1::CoordinateSpace>;
 template <>
 internal::EnumTraitsT<::crosspoint::sim::control::v1alpha1::InputSource_internal_data_>
     internal::EnumTraitsImpl::value<::crosspoint::sim::control::v1alpha1::InputSource>;
@@ -288,6 +301,47 @@ template <>
 [[nodiscard]] inline bool InputSource_Parse(
     ::absl::string_view name, InputSource* PROTOBUF_NONNULL value) {
   return ::google::protobuf::internal::ParseNamedEnum<InputSource>(InputSource_descriptor(), name,
+                                           value);
+}
+enum CoordinateSpace : int {
+  COORDINATE_SPACE_UNSPECIFIED = 0,
+  COORDINATE_SPACE_PANEL = 1,
+  COORDINATE_SPACE_LOGICAL = 2,
+  CoordinateSpace_INT_MIN_SENTINEL_DO_NOT_USE_ =
+      ::std::numeric_limits<::int32_t>::min(),
+  CoordinateSpace_INT_MAX_SENTINEL_DO_NOT_USE_ =
+      ::std::numeric_limits<::int32_t>::max(),
+};
+
+extern const uint32_t CoordinateSpace_internal_data_[];
+inline constexpr CoordinateSpace CoordinateSpace_MIN =
+    static_cast<CoordinateSpace>(0);
+inline constexpr CoordinateSpace CoordinateSpace_MAX =
+    static_cast<CoordinateSpace>(2);
+[[nodiscard]] inline bool CoordinateSpace_IsValid(int value) {
+  return 0 <= value && value <= 2;
+}
+inline constexpr int CoordinateSpace_ARRAYSIZE = 2 + 1;
+[[nodiscard]] const ::google::protobuf::EnumDescriptor* PROTOBUF_NONNULL
+CoordinateSpace_descriptor();
+[[nodiscard]] inline auto ProtobufInternalGetEnumDescriptor(CoordinateSpace) {
+  return CoordinateSpace_descriptor();
+}
+template <typename T>
+[[nodiscard]] const ::std::string& CoordinateSpace_Name(T value) {
+  static_assert(::std::is_same<T, CoordinateSpace>::value ||
+                    ::std::is_integral<T>::value,
+                "Incorrect type passed to CoordinateSpace_Name().");
+  return CoordinateSpace_Name(static_cast<CoordinateSpace>(value));
+}
+template <>
+[[nodiscard]] inline const ::std::string& CoordinateSpace_Name(CoordinateSpace value) {
+  return ::google::protobuf::internal::NameOfDenseEnum<CoordinateSpace_descriptor, 0, 2>(
+      static_cast<int>(value));
+}
+[[nodiscard]] inline bool CoordinateSpace_Parse(
+    ::absl::string_view name, CoordinateSpace* PROTOBUF_NONNULL value) {
+  return ::google::protobuf::internal::ParseNamedEnum<CoordinateSpace>(CoordinateSpace_descriptor(), name,
                                            value);
 }
 enum LogType : int {
@@ -381,6 +435,236 @@ using ::google::protobuf::internal::generated_enum::AbslUnparseFlag;
 // ===================================================================
 
 
+// -------------------------------------------------------------------
+
+class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED UiResult final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:crosspoint.sim.control.v1alpha1.UiResult) */ {
+ public:
+  inline UiResult() : UiResult(nullptr) {}
+  ~UiResult() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(UiResult* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(UiResult));
+  }
+#endif
+
+  template <typename = void>
+  explicit constexpr UiResult(::google::protobuf::internal::ConstantInitialized,
+                           const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+                               class_data);
+
+  inline UiResult(const UiResult& from) : UiResult(nullptr, from) {}
+  inline UiResult(UiResult&& from) noexcept : UiResult(nullptr, ::std::move(from)) {}
+  inline UiResult& operator=(const UiResult& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline UiResult& operator=(UiResult&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  [[nodiscard]] inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  [[nodiscard]] inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL
+  mutable_unknown_fields() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL
+  GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  [[nodiscard]] static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  [[nodiscard]] static const UiResult& default_instance() {
+    return *::google::protobuf::internal::MessageGlobalsBase::ToDefaultInstance<UiResult>(&UiResult_globals_);
+  }
+  static constexpr int kIndexInFileMessages = 18;
+  friend void swap(UiResult& a, UiResult& b) { a.Swap(&b); }
+  inline void Swap(UiResult* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(UiResult* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  [[nodiscard]] UiResult* PROTOBUF_NONNULL
+  New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<UiResult>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const UiResult& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const UiResult& from) { UiResult::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  [[nodiscard]] bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  [[nodiscard]] static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  [[nodiscard]] static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  [[nodiscard]] ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  [[nodiscard]] ::size_t ByteSizeLong() const final;
+  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  [[nodiscard]] int GetCachedSize() const {
+    return _impl_._cached_size_.Get();
+  }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(UiResult* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "crosspoint.sim.control.v1alpha1.UiResult"; }
+
+  explicit UiResult(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  UiResult(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const UiResult& from);
+  UiResult(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, UiResult&& from) noexcept
+      : UiResult(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_(
+      const MessageLite& prototype,
+      const ::google::protobuf::internal::TcParseTableBase* PROTOBUF_NULLABLE tc_table = nullptr);
+
+  [[nodiscard]] ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kActivityFieldNumber = 3,
+    kGenerationFieldNumber = 2,
+    kPaintedFieldNumber = 1,
+  };
+  // string activity = 3 [json_name = "activity"];
+  void clear_activity() ;
+  [[nodiscard]] const ::std::string& activity() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_activity(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_activity();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_activity();
+  void set_allocated_activity(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_activity() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_activity(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_activity();
+
+  public:
+  // uint64 generation = 2 [json_name = "generation"];
+  void clear_generation() ;
+  [[nodiscard]] ::uint64_t generation() const;
+  void set_generation(::uint64_t value);
+
+  private:
+  ::uint64_t _internal_generation() const;
+  void _internal_set_generation(::uint64_t value);
+
+  public:
+  // bool painted = 1 [json_name = "painted"];
+  void clear_painted() ;
+  [[nodiscard]] bool painted() const;
+  void set_painted(bool value);
+
+  private:
+  bool _internal_painted() const;
+  void _internal_set_painted(bool value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:crosspoint.sim.control.v1alpha1.UiResult)
+ private:
+  class _Internal;
+  using ParseTableT_ =
+      ::google::protobuf::internal::TcParseTable<2, 3,
+                          0, 57,
+                          2>;
+  static constexpr ParseTableT_ InternalGenerateParseTable_(
+      const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL class_data);
+  friend class ::google::protobuf::internal::TcParser;
+  #ifndef PROTOBUF_MESSAGE_GLOBALS
+  static const ParseTableT_ _table_;
+  #endif
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  friend ::google::protobuf::internal::PrivateAccess;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                                    ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const UiResult& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::internal::ArenaStringPtr activity_;
+    ::uint64_t generation_;
+    bool painted_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsimulator_5fcontrol_2eproto;
+};
 // -------------------------------------------------------------------
 
 class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED TouchEdge final : public ::google::protobuf::Message
@@ -2075,7 +2359,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED LogLine final : public ::google::pr
   [[nodiscard]] static const LogLine& default_instance() {
     return *::google::protobuf::internal::MessageGlobalsBase::ToDefaultInstance<LogLine>(&LogLine_globals_);
   }
-  static constexpr int kIndexInFileMessages = 18;
+  static constexpr int kIndexInFileMessages = 19;
   friend void swap(LogLine& a, LogLine& b) { a.Swap(&b); }
   inline void Swap(LogLine* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2865,6 +3149,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED InjectTouch final : public ::google
     kKindFieldNumber = 1,
     kXFieldNumber = 2,
     kYFieldNumber = 3,
+    kCoordinateSpaceFieldNumber = 4,
   };
   // uint32 kind = 1 [json_name = "kind"];
   void clear_kind() ;
@@ -2896,11 +3181,21 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED InjectTouch final : public ::google
   void _internal_set_y(::uint32_t value);
 
   public:
+  // .crosspoint.sim.control.v1alpha1.CoordinateSpace coordinate_space = 4 [json_name = "coordinateSpace"];
+  void clear_coordinate_space() ;
+  [[nodiscard]] ::crosspoint::sim::control::v1alpha1::CoordinateSpace coordinate_space() const;
+  void set_coordinate_space(::crosspoint::sim::control::v1alpha1::CoordinateSpace value);
+
+  private:
+  ::crosspoint::sim::control::v1alpha1::CoordinateSpace _internal_coordinate_space() const;
+  void _internal_set_coordinate_space(::crosspoint::sim::control::v1alpha1::CoordinateSpace value);
+
+  public:
   // @@protoc_insertion_point(class_scope:crosspoint.sim.control.v1alpha1.InjectTouch)
  private:
   class _Internal;
   using ParseTableT_ =
-      ::google::protobuf::internal::TcParseTable<2, 3,
+      ::google::protobuf::internal::TcParseTable<2, 4,
                           0, 0,
                           2>;
   static constexpr ParseTableT_ InternalGenerateParseTable_(
@@ -2932,6 +3227,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED InjectTouch final : public ::google
     ::uint32_t kind_;
     ::uint32_t x_;
     ::uint32_t y_;
+    int coordinate_space_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
   union { Impl_ _impl_; };
@@ -3092,6 +3388,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED InjectSwipe final : public ::google
     kEndXFieldNumber = 3,
     kEndYFieldNumber = 4,
     kDurationMsFieldNumber = 5,
+    kCoordinateSpaceFieldNumber = 6,
   };
   // uint32 start_x = 1 [json_name = "startX"];
   void clear_start_x() ;
@@ -3143,11 +3440,21 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED InjectSwipe final : public ::google
   void _internal_set_duration_ms(::uint32_t value);
 
   public:
+  // .crosspoint.sim.control.v1alpha1.CoordinateSpace coordinate_space = 6 [json_name = "coordinateSpace"];
+  void clear_coordinate_space() ;
+  [[nodiscard]] ::crosspoint::sim::control::v1alpha1::CoordinateSpace coordinate_space() const;
+  void set_coordinate_space(::crosspoint::sim::control::v1alpha1::CoordinateSpace value);
+
+  private:
+  ::crosspoint::sim::control::v1alpha1::CoordinateSpace _internal_coordinate_space() const;
+  void _internal_set_coordinate_space(::crosspoint::sim::control::v1alpha1::CoordinateSpace value);
+
+  public:
   // @@protoc_insertion_point(class_scope:crosspoint.sim.control.v1alpha1.InjectSwipe)
  private:
   class _Internal;
   using ParseTableT_ =
-      ::google::protobuf::internal::TcParseTable<3, 5,
+      ::google::protobuf::internal::TcParseTable<3, 6,
                           0, 0,
                           2>;
   static constexpr ParseTableT_ InternalGenerateParseTable_(
@@ -3181,6 +3488,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED InjectSwipe final : public ::google
     ::uint32_t end_x_;
     ::uint32_t end_y_;
     ::uint32_t duration_ms_;
+    int coordinate_space_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
   union { Impl_ _impl_; };
@@ -4157,10 +4465,29 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED Heartbeat final : public ::google::
 
   // accessors -------------------------------------------------------
   enum : int {
+    kActivityFieldNumber = 4,
     kFramebufferGenerationFieldNumber = 1,
     kInjectEnabledFieldNumber = 2,
     kHeadlessFieldNumber = 3,
+    kReaderSpineFieldNumber = 5,
+    kReaderPageFieldNumber = 6,
+    kOrientationFieldNumber = 7,
   };
+  // string activity = 4 [json_name = "activity"];
+  void clear_activity() ;
+  [[nodiscard]] const ::std::string& activity() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_activity(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_activity();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_activity();
+  void set_allocated_activity(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_activity() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_activity(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_activity();
+
+  public:
   // uint64 framebuffer_generation = 1 [json_name = "framebufferGeneration"];
   void clear_framebuffer_generation() ;
   [[nodiscard]] ::uint64_t framebuffer_generation() const;
@@ -4191,12 +4518,42 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED Heartbeat final : public ::google::
   void _internal_set_headless(bool value);
 
   public:
+  // int32 reader_spine = 5 [json_name = "readerSpine"];
+  void clear_reader_spine() ;
+  [[nodiscard]] ::int32_t reader_spine() const;
+  void set_reader_spine(::int32_t value);
+
+  private:
+  ::int32_t _internal_reader_spine() const;
+  void _internal_set_reader_spine(::int32_t value);
+
+  public:
+  // int32 reader_page = 6 [json_name = "readerPage"];
+  void clear_reader_page() ;
+  [[nodiscard]] ::int32_t reader_page() const;
+  void set_reader_page(::int32_t value);
+
+  private:
+  ::int32_t _internal_reader_page() const;
+  void _internal_set_reader_page(::int32_t value);
+
+  public:
+  // uint32 orientation = 7 [json_name = "orientation"];
+  void clear_orientation() ;
+  [[nodiscard]] ::uint32_t orientation() const;
+  void set_orientation(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_orientation() const;
+  void _internal_set_orientation(::uint32_t value);
+
+  public:
   // @@protoc_insertion_point(class_scope:crosspoint.sim.control.v1alpha1.Heartbeat)
  private:
   class _Internal;
   using ParseTableT_ =
-      ::google::protobuf::internal::TcParseTable<2, 3,
-                          0, 0,
+      ::google::protobuf::internal::TcParseTable<3, 7,
+                          0, 58,
                           2>;
   static constexpr ParseTableT_ InternalGenerateParseTable_(
       const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL class_data);
@@ -4224,9 +4581,13 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED Heartbeat final : public ::google::
         const Heartbeat& from_msg);
     ::google::protobuf::internal::HasBits<1> _has_bits_;
     ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::internal::ArenaStringPtr activity_;
     ::uint64_t framebuffer_generation_;
     bool inject_enabled_;
     bool headless_;
+    ::int32_t reader_spine_;
+    ::int32_t reader_page_;
+    ::uint32_t orientation_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
   union { Impl_ _impl_; };
@@ -4290,7 +4651,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED Goodbye final : public ::google::pr
   [[nodiscard]] static const Goodbye& default_instance() {
     return *::google::protobuf::internal::MessageGlobalsBase::ToDefaultInstance<Goodbye>(&Goodbye_globals_);
   }
-  static constexpr int kIndexInFileMessages = 19;
+  static constexpr int kIndexInFileMessages = 20;
   friend void swap(Goodbye& a, Goodbye& b) { a.Swap(&b); }
   inline void Swap(Goodbye* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -4588,8 +4949,36 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SetSessionView final : public ::goo
 
   // accessors -------------------------------------------------------
   enum : int {
+    kExcludeLogComponentsFieldNumber = 2,
     kReadMaskFieldNumber = 1,
   };
+  // repeated string exclude_log_components = 2 [json_name = "excludeLogComponents"];
+  [[nodiscard]] int exclude_log_components_size()
+      const;
+  private:
+  int _internal_exclude_log_components_size() const;
+
+  public:
+  void clear_exclude_log_components() ;
+  [[nodiscard]] const ::std::string& exclude_log_components(int index) const;
+  ::std::string* PROTOBUF_NONNULL mutable_exclude_log_components(int index);
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_exclude_log_components(int index, Arg_&& value, Args_... args);
+  ::std::string* PROTOBUF_NONNULL add_exclude_log_components();
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void add_exclude_log_components(Arg_&& value, Args_... args);
+  [[nodiscard]] const
+      ::google::protobuf::RepeatedPtrField<::std::string>&
+      exclude_log_components() const;
+  [[nodiscard]] ::google::protobuf::RepeatedPtrField<::std::string>*
+      PROTOBUF_NONNULL
+      mutable_exclude_log_components();
+
+  private:
+  const ::google::protobuf::RepeatedPtrField<::std::string>& _internal_exclude_log_components() const;
+  ::google::protobuf::RepeatedPtrField<::std::string>* PROTOBUF_NONNULL _internal_mutable_exclude_log_components();
+
+  public:
   // .google.protobuf.FieldMask read_mask = 1 [json_name = "readMask"];
   [[nodiscard]] bool has_read_mask()
       const;
@@ -4610,8 +4999,8 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SetSessionView final : public ::goo
  private:
   class _Internal;
   using ParseTableT_ =
-      ::google::protobuf::internal::TcParseTable<0, 1,
-                          1, 0,
+      ::google::protobuf::internal::TcParseTable<1, 2,
+                          1, 77,
                           2>;
   static constexpr ParseTableT_ InternalGenerateParseTable_(
       const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL class_data);
@@ -4639,6 +5028,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SetSessionView final : public ::goo
         const SetSessionView& from_msg);
     ::google::protobuf::internal::HasBits<1> _has_bits_;
     ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::RepeatedPtrField<::std::string> exclude_log_components_;
     ::google::protobuf::FieldMask* PROTOBUF_NULLABLE read_mask_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -5379,7 +5769,7 @@ inline void Register::set_allocated_version(::std::string* PROTOBUF_NULLABLE val
 inline void Heartbeat::clear_framebuffer_generation() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.framebuffer_generation_ = ::uint64_t{0u};
-  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
 }
 inline ::uint64_t Heartbeat::framebuffer_generation() const {
   // @@protoc_insertion_point(field_get:crosspoint.sim.control.v1alpha1.Heartbeat.framebuffer_generation)
@@ -5387,7 +5777,7 @@ inline ::uint64_t Heartbeat::framebuffer_generation() const {
 }
 inline void Heartbeat::set_framebuffer_generation(::uint64_t value) {
   _internal_set_framebuffer_generation(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
   // @@protoc_insertion_point(field_set:crosspoint.sim.control.v1alpha1.Heartbeat.framebuffer_generation)
 }
 inline ::uint64_t Heartbeat::_internal_framebuffer_generation() const {
@@ -5403,7 +5793,7 @@ inline void Heartbeat::_internal_set_framebuffer_generation(::uint64_t value) {
 inline void Heartbeat::clear_inject_enabled() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.inject_enabled_ = false;
-  ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  ClearHasBit(_impl_._has_bits_[0], 0x00000004U);
 }
 inline bool Heartbeat::inject_enabled() const {
   // @@protoc_insertion_point(field_get:crosspoint.sim.control.v1alpha1.Heartbeat.inject_enabled)
@@ -5411,7 +5801,7 @@ inline bool Heartbeat::inject_enabled() const {
 }
 inline void Heartbeat::set_inject_enabled(bool value) {
   _internal_set_inject_enabled(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
   // @@protoc_insertion_point(field_set:crosspoint.sim.control.v1alpha1.Heartbeat.inject_enabled)
 }
 inline bool Heartbeat::_internal_inject_enabled() const {
@@ -5427,7 +5817,7 @@ inline void Heartbeat::_internal_set_inject_enabled(bool value) {
 inline void Heartbeat::clear_headless() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.headless_ = false;
-  ClearHasBit(_impl_._has_bits_[0], 0x00000004U);
+  ClearHasBit(_impl_._has_bits_[0], 0x00000008U);
 }
 inline bool Heartbeat::headless() const {
   // @@protoc_insertion_point(field_get:crosspoint.sim.control.v1alpha1.Heartbeat.headless)
@@ -5435,7 +5825,7 @@ inline bool Heartbeat::headless() const {
 }
 inline void Heartbeat::set_headless(bool value) {
   _internal_set_headless(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000008U);
   // @@protoc_insertion_point(field_set:crosspoint.sim.control.v1alpha1.Heartbeat.headless)
 }
 inline bool Heartbeat::_internal_headless() const {
@@ -5445,6 +5835,142 @@ inline bool Heartbeat::_internal_headless() const {
 inline void Heartbeat::_internal_set_headless(bool value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.headless_ = value;
+}
+
+// string activity = 4 [json_name = "activity"];
+inline void Heartbeat::clear_activity() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.activity_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+}
+inline const ::std::string& Heartbeat::activity() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:crosspoint.sim.control.v1alpha1.Heartbeat.activity)
+  return _internal_activity();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void Heartbeat::set_activity(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  _impl_.activity_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:crosspoint.sim.control.v1alpha1.Heartbeat.activity)
+}
+inline ::std::string* PROTOBUF_NONNULL Heartbeat::mutable_activity()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ::std::string* _s = _internal_mutable_activity();
+  // @@protoc_insertion_point(field_mutable:crosspoint.sim.control.v1alpha1.Heartbeat.activity)
+  return _s;
+}
+inline const ::std::string& Heartbeat::_internal_activity() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.activity_.Get();
+}
+inline void Heartbeat::_internal_set_activity(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.activity_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL Heartbeat::_internal_mutable_activity() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.activity_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE Heartbeat::release_activity() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:crosspoint.sim.control.v1alpha1.Heartbeat.activity)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000001U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  auto* released = _impl_.activity_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.activity_.Set("", GetArena());
+  }
+  return released;
+}
+inline void Heartbeat::set_allocated_activity(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  }
+  _impl_.activity_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.activity_.IsDefault()) {
+    _impl_.activity_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:crosspoint.sim.control.v1alpha1.Heartbeat.activity)
+}
+
+// int32 reader_spine = 5 [json_name = "readerSpine"];
+inline void Heartbeat::clear_reader_spine() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.reader_spine_ = 0;
+  ClearHasBit(_impl_._has_bits_[0], 0x00000010U);
+}
+inline ::int32_t Heartbeat::reader_spine() const {
+  // @@protoc_insertion_point(field_get:crosspoint.sim.control.v1alpha1.Heartbeat.reader_spine)
+  return _internal_reader_spine();
+}
+inline void Heartbeat::set_reader_spine(::int32_t value) {
+  _internal_set_reader_spine(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000010U);
+  // @@protoc_insertion_point(field_set:crosspoint.sim.control.v1alpha1.Heartbeat.reader_spine)
+}
+inline ::int32_t Heartbeat::_internal_reader_spine() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.reader_spine_;
+}
+inline void Heartbeat::_internal_set_reader_spine(::int32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.reader_spine_ = value;
+}
+
+// int32 reader_page = 6 [json_name = "readerPage"];
+inline void Heartbeat::clear_reader_page() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.reader_page_ = 0;
+  ClearHasBit(_impl_._has_bits_[0], 0x00000020U);
+}
+inline ::int32_t Heartbeat::reader_page() const {
+  // @@protoc_insertion_point(field_get:crosspoint.sim.control.v1alpha1.Heartbeat.reader_page)
+  return _internal_reader_page();
+}
+inline void Heartbeat::set_reader_page(::int32_t value) {
+  _internal_set_reader_page(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000020U);
+  // @@protoc_insertion_point(field_set:crosspoint.sim.control.v1alpha1.Heartbeat.reader_page)
+}
+inline ::int32_t Heartbeat::_internal_reader_page() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.reader_page_;
+}
+inline void Heartbeat::_internal_set_reader_page(::int32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.reader_page_ = value;
+}
+
+// uint32 orientation = 7 [json_name = "orientation"];
+inline void Heartbeat::clear_orientation() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.orientation_ = 0u;
+  ClearHasBit(_impl_._has_bits_[0], 0x00000040U);
+}
+inline ::uint32_t Heartbeat::orientation() const {
+  // @@protoc_insertion_point(field_get:crosspoint.sim.control.v1alpha1.Heartbeat.orientation)
+  return _internal_orientation();
+}
+inline void Heartbeat::set_orientation(::uint32_t value) {
+  _internal_set_orientation(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000040U);
+  // @@protoc_insertion_point(field_set:crosspoint.sim.control.v1alpha1.Heartbeat.orientation)
+}
+inline ::uint32_t Heartbeat::_internal_orientation() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.orientation_;
+}
+inline void Heartbeat::_internal_set_orientation(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.orientation_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -6007,6 +6533,30 @@ inline void InjectTouch::_internal_set_y(::uint32_t value) {
   _impl_.y_ = value;
 }
 
+// .crosspoint.sim.control.v1alpha1.CoordinateSpace coordinate_space = 4 [json_name = "coordinateSpace"];
+inline void InjectTouch::clear_coordinate_space() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.coordinate_space_ = 0;
+  ClearHasBit(_impl_._has_bits_[0], 0x00000008U);
+}
+inline ::crosspoint::sim::control::v1alpha1::CoordinateSpace InjectTouch::coordinate_space() const {
+  // @@protoc_insertion_point(field_get:crosspoint.sim.control.v1alpha1.InjectTouch.coordinate_space)
+  return _internal_coordinate_space();
+}
+inline void InjectTouch::set_coordinate_space(::crosspoint::sim::control::v1alpha1::CoordinateSpace value) {
+  _internal_set_coordinate_space(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000008U);
+  // @@protoc_insertion_point(field_set:crosspoint.sim.control.v1alpha1.InjectTouch.coordinate_space)
+}
+inline ::crosspoint::sim::control::v1alpha1::CoordinateSpace InjectTouch::_internal_coordinate_space() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return static_cast<::crosspoint::sim::control::v1alpha1::CoordinateSpace>(_impl_.coordinate_space_);
+}
+inline void InjectTouch::_internal_set_coordinate_space(::crosspoint::sim::control::v1alpha1::CoordinateSpace value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.coordinate_space_ = value;
+}
+
 // -------------------------------------------------------------------
 
 // InjectKey
@@ -6249,6 +6799,30 @@ inline ::uint32_t InjectSwipe::_internal_duration_ms() const {
 inline void InjectSwipe::_internal_set_duration_ms(::uint32_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.duration_ms_ = value;
+}
+
+// .crosspoint.sim.control.v1alpha1.CoordinateSpace coordinate_space = 6 [json_name = "coordinateSpace"];
+inline void InjectSwipe::clear_coordinate_space() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.coordinate_space_ = 0;
+  ClearHasBit(_impl_._has_bits_[0], 0x00000020U);
+}
+inline ::crosspoint::sim::control::v1alpha1::CoordinateSpace InjectSwipe::coordinate_space() const {
+  // @@protoc_insertion_point(field_get:crosspoint.sim.control.v1alpha1.InjectSwipe.coordinate_space)
+  return _internal_coordinate_space();
+}
+inline void InjectSwipe::set_coordinate_space(::crosspoint::sim::control::v1alpha1::CoordinateSpace value) {
+  _internal_set_coordinate_space(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000020U);
+  // @@protoc_insertion_point(field_set:crosspoint.sim.control.v1alpha1.InjectSwipe.coordinate_space)
+}
+inline ::crosspoint::sim::control::v1alpha1::CoordinateSpace InjectSwipe::_internal_coordinate_space() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return static_cast<::crosspoint::sim::control::v1alpha1::CoordinateSpace>(_impl_.coordinate_space_);
+}
+inline void InjectSwipe::_internal_set_coordinate_space(::crosspoint::sim::control::v1alpha1::CoordinateSpace value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.coordinate_space_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -6970,7 +7544,7 @@ inline void HostEdge::_internal_set_kind(::uint32_t value) {
 
 // .google.protobuf.FieldMask read_mask = 1 [json_name = "readMask"];
 inline bool SetSessionView::has_read_mask() const {
-  bool value = CheckHasBit(_impl_._has_bits_[0], 0x00000001U);
+  bool value = CheckHasBit(_impl_._has_bits_[0], 0x00000002U);
   PROTOBUF_ASSUME(!value || _impl_.read_mask_ != nullptr);
   return value;
 }
@@ -6991,16 +7565,16 @@ inline void SetSessionView::unsafe_arena_set_allocated_read_mask(
   }
   _impl_.read_mask_ = reinterpret_cast<::google::protobuf::FieldMask*>(value);
   if (value != nullptr) {
-    SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+    SetHasBit(_impl_._has_bits_[0], 0x00000002U);
   } else {
-    ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+    ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:crosspoint.sim.control.v1alpha1.SetSessionView.read_mask)
 }
 inline ::google::protobuf::FieldMask* PROTOBUF_NULLABLE SetSessionView::release_read_mask() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
 
-  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
   ::google::protobuf::FieldMask* released = _impl_.read_mask_;
   _impl_.read_mask_ = nullptr;
   if (::google::protobuf::internal::DebugHardenForceCopyInRelease()) {
@@ -7020,7 +7594,7 @@ inline ::google::protobuf::FieldMask* PROTOBUF_NULLABLE SetSessionView::unsafe_a
   ::google::protobuf::internal::TSanWrite(&_impl_);
   // @@protoc_insertion_point(field_release:crosspoint.sim.control.v1alpha1.SetSessionView.read_mask)
 
-  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
   ::google::protobuf::FieldMask* temp = _impl_.read_mask_;
   _impl_.read_mask_ = nullptr;
   return temp;
@@ -7035,7 +7609,7 @@ inline ::google::protobuf::FieldMask* PROTOBUF_NONNULL SetSessionView::_internal
 }
 inline ::google::protobuf::FieldMask* PROTOBUF_NONNULL SetSessionView::mutable_read_mask()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
   ::google::protobuf::FieldMask* _msg = _internal_mutable_read_mask();
   // @@protoc_insertion_point(field_mutable:crosspoint.sim.control.v1alpha1.SetSessionView.read_mask)
   return _msg;
@@ -7052,13 +7626,201 @@ inline void SetSessionView::set_allocated_read_mask(::google::protobuf::FieldMas
     if (message_arena != submessage_arena) {
       value = ::google::protobuf::internal::GetOwnedMessage(message_arena, value, submessage_arena);
     }
-    SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+    SetHasBit(_impl_._has_bits_[0], 0x00000002U);
   } else {
-    ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+    ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
   }
 
   _impl_.read_mask_ = reinterpret_cast<::google::protobuf::FieldMask*>(value);
   // @@protoc_insertion_point(field_set_allocated:crosspoint.sim.control.v1alpha1.SetSessionView.read_mask)
+}
+
+// repeated string exclude_log_components = 2 [json_name = "excludeLogComponents"];
+inline int SetSessionView::_internal_exclude_log_components_size() const {
+  return _internal_exclude_log_components().size();
+}
+inline int SetSessionView::exclude_log_components_size() const {
+  return _internal_exclude_log_components_size();
+}
+inline void SetSessionView::clear_exclude_log_components() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.exclude_log_components_.Clear();
+  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+}
+inline ::std::string* PROTOBUF_NONNULL SetSessionView::add_exclude_log_components()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::std::string* _s =
+      _internal_mutable_exclude_log_components()->InternalAddWithArena(
+          ::google::protobuf::MessageLite::internal_visibility(), GetArena());
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  // @@protoc_insertion_point(field_add_mutable:crosspoint.sim.control.v1alpha1.SetSessionView.exclude_log_components)
+  return _s;
+}
+inline const ::std::string& SetSessionView::exclude_log_components(int index) const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:crosspoint.sim.control.v1alpha1.SetSessionView.exclude_log_components)
+  return _internal_exclude_log_components().Get(index);
+}
+inline ::std::string* PROTOBUF_NONNULL SetSessionView::mutable_exclude_log_components(int index)
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable:crosspoint.sim.control.v1alpha1.SetSessionView.exclude_log_components)
+  return _internal_mutable_exclude_log_components()->Mutable(index);
+}
+template <typename Arg_, typename... Args_>
+inline void SetSessionView::set_exclude_log_components(int index, Arg_&& value, Args_... args) {
+  ::google::protobuf::internal::AssignToString(
+      *_internal_mutable_exclude_log_components()->Mutable(index),
+      ::std::forward<Arg_>(value), args... );
+  // @@protoc_insertion_point(field_set:crosspoint.sim.control.v1alpha1.SetSessionView.exclude_log_components)
+}
+template <typename Arg_, typename... Args_>
+inline void SetSessionView::add_exclude_log_components(Arg_&& value, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::google::protobuf::internal::AddToRepeatedPtrField(
+      ::google::protobuf::MessageLite::internal_visibility(), GetArena(),
+      *_internal_mutable_exclude_log_components(), ::std::forward<Arg_>(value),
+      args... );
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  // @@protoc_insertion_point(field_add:crosspoint.sim.control.v1alpha1.SetSessionView.exclude_log_components)
+}
+inline const ::google::protobuf::RepeatedPtrField<::std::string>& SetSessionView::exclude_log_components()
+    const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_list:crosspoint.sim.control.v1alpha1.SetSessionView.exclude_log_components)
+  return _internal_exclude_log_components();
+}
+inline ::google::protobuf::RepeatedPtrField<::std::string>* PROTOBUF_NONNULL
+SetSessionView::mutable_exclude_log_components() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  // @@protoc_insertion_point(field_mutable_list:crosspoint.sim.control.v1alpha1.SetSessionView.exclude_log_components)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _internal_mutable_exclude_log_components();
+}
+inline const ::google::protobuf::RepeatedPtrField<::std::string>&
+SetSessionView::_internal_exclude_log_components() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.exclude_log_components_;
+}
+inline ::google::protobuf::RepeatedPtrField<::std::string>* PROTOBUF_NONNULL
+SetSessionView::_internal_mutable_exclude_log_components() {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return &_impl_.exclude_log_components_;
+}
+
+// -------------------------------------------------------------------
+
+// UiResult
+
+// bool painted = 1 [json_name = "painted"];
+inline void UiResult::clear_painted() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.painted_ = false;
+  ClearHasBit(_impl_._has_bits_[0], 0x00000004U);
+}
+inline bool UiResult::painted() const {
+  // @@protoc_insertion_point(field_get:crosspoint.sim.control.v1alpha1.UiResult.painted)
+  return _internal_painted();
+}
+inline void UiResult::set_painted(bool value) {
+  _internal_set_painted(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  // @@protoc_insertion_point(field_set:crosspoint.sim.control.v1alpha1.UiResult.painted)
+}
+inline bool UiResult::_internal_painted() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.painted_;
+}
+inline void UiResult::_internal_set_painted(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.painted_ = value;
+}
+
+// uint64 generation = 2 [json_name = "generation"];
+inline void UiResult::clear_generation() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.generation_ = ::uint64_t{0u};
+  ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+}
+inline ::uint64_t UiResult::generation() const {
+  // @@protoc_insertion_point(field_get:crosspoint.sim.control.v1alpha1.UiResult.generation)
+  return _internal_generation();
+}
+inline void UiResult::set_generation(::uint64_t value) {
+  _internal_set_generation(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  // @@protoc_insertion_point(field_set:crosspoint.sim.control.v1alpha1.UiResult.generation)
+}
+inline ::uint64_t UiResult::_internal_generation() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.generation_;
+}
+inline void UiResult::_internal_set_generation(::uint64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.generation_ = value;
+}
+
+// string activity = 3 [json_name = "activity"];
+inline void UiResult::clear_activity() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.activity_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+}
+inline const ::std::string& UiResult::activity() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:crosspoint.sim.control.v1alpha1.UiResult.activity)
+  return _internal_activity();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void UiResult::set_activity(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  _impl_.activity_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:crosspoint.sim.control.v1alpha1.UiResult.activity)
+}
+inline ::std::string* PROTOBUF_NONNULL UiResult::mutable_activity()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ::std::string* _s = _internal_mutable_activity();
+  // @@protoc_insertion_point(field_mutable:crosspoint.sim.control.v1alpha1.UiResult.activity)
+  return _s;
+}
+inline const ::std::string& UiResult::_internal_activity() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.activity_.Get();
+}
+inline void UiResult::_internal_set_activity(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.activity_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL UiResult::_internal_mutable_activity() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.activity_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE UiResult::release_activity() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:crosspoint.sim.control.v1alpha1.UiResult.activity)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000001U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  auto* released = _impl_.activity_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.activity_.Set("", GetArena());
+  }
+  return released;
+}
+inline void UiResult::set_allocated_activity(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  }
+  _impl_.activity_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.activity_.IsDefault()) {
+    _impl_.activity_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:crosspoint.sim.control.v1alpha1.UiResult.activity)
 }
 
 // -------------------------------------------------------------------
@@ -7352,6 +8114,12 @@ struct is_proto_enum<::crosspoint::sim::control::v1alpha1::InputSource> : std::t
 template <>
 inline const EnumDescriptor* PROTOBUF_NONNULL GetEnumDescriptor<::crosspoint::sim::control::v1alpha1::InputSource>() {
   return ::crosspoint::sim::control::v1alpha1::InputSource_descriptor();
+}
+template <>
+struct is_proto_enum<::crosspoint::sim::control::v1alpha1::CoordinateSpace> : std::true_type {};
+template <>
+inline const EnumDescriptor* PROTOBUF_NONNULL GetEnumDescriptor<::crosspoint::sim::control::v1alpha1::CoordinateSpace>() {
+  return ::crosspoint::sim::control::v1alpha1::CoordinateSpace_descriptor();
 }
 template <>
 struct is_proto_enum<::crosspoint::sim::control::v1alpha1::LogType> : std::true_type {};

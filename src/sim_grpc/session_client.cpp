@@ -27,11 +27,13 @@
 #include <string>
 #include <thread>
 #include <unistd.h>
+#include <utility>
 #include <vector>
 
 namespace SimGrpc {
 namespace {
 
+using crosspoint::sim::control::v1alpha1::CoordinateSpace;
 using crosspoint::sim::control::v1alpha1::Goodbye;
 using crosspoint::sim::control::v1alpha1::Heartbeat;
 using crosspoint::sim::control::v1alpha1::HomeEdge;
@@ -50,12 +52,14 @@ using crosspoint::sim::control::v1alpha1::SimulatorControlService;
 using crosspoint::sim::control::v1alpha1::SnapshotError;
 using crosspoint::sim::control::v1alpha1::SnapshotFrame;
 using crosspoint::sim::control::v1alpha1::TouchEdge;
+using crosspoint::sim::control::v1alpha1::UiResult;
 
 constexpr size_t kQueueCap = 32;
 constexpr int kIdMin = 1;
 constexpr int kIdMax = 64;
 constexpr unsigned long kDefaultHoldMs = 80;
 constexpr unsigned long kDefaultSwipeMs = 250;
+constexpr auto kUiResultMiss = std::chrono::milliseconds(400);
 
 std::atomic<bool> gStop{false};
 std::atomic<bool> gStarted{false};
@@ -74,6 +78,21 @@ std::deque<std::vector<RemoteEvent>> gInjectQ;
 
 std::mutex gViewMu;
 std::vector<std::string> gReadMask;
+std::vector<std::string> gExcludeLogComponents;
+
+std::mutex gUiStateMu;
+std::string gActivity;
+int32_t gReaderSpine = 0;
+int32_t gReaderPage = 0;
+
+struct PendingUiResult {
+  uint64_t corr = 0;
+  uint64_t start_gen = 0;
+  std::chrono::steady_clock::time_point deadline;
+};
+
+std::mutex gUiResultMu;
+std::vector<PendingUiResult> gPendingUi;
 
 std::mutex gSnapMu;
 bool gSnapPending = false;
@@ -185,6 +204,7 @@ bool alwaysEmit(const char *name) {
   return std::strcmp(name, "register") == 0 ||
          std::strcmp(name, "goodbye") == 0 ||
          std::strcmp(name, "input_ack") == 0 ||
+         std::strcmp(name, "ui_result") == 0 ||
          std::strcmp(name, "snapshot") == 0 ||
          std::strcmp(name, "snapshot_error") == 0;
 }
@@ -200,9 +220,154 @@ bool shouldEmit(const char *name) {
   return std::find(gReadMask.begin(), gReadMask.end(), name) != gReadMask.end();
 }
 
+uint32_t clampPanelX(uint32_t x);
+uint32_t clampPanelY(uint32_t y);
+void maybeAck(const ServerToSim &inbound, bool accepted, const char *reason);
+
 void setReadMask(const google::protobuf::RepeatedPtrField<std::string> &paths) {
   std::lock_guard<std::mutex> lock(gViewMu);
   gReadMask.assign(paths.begin(), paths.end());
+}
+
+void setExcludeLogComponents(
+    const google::protobuf::RepeatedPtrField<std::string> &components) {
+  std::lock_guard<std::mutex> lock(gViewMu);
+  gExcludeLogComponents.assign(components.begin(), components.end());
+}
+
+bool logComponentExcluded(const std::string &component) {
+  std::lock_guard<std::mutex> lock(gViewMu);
+  return std::find(gExcludeLogComponents.begin(), gExcludeLogComponents.end(),
+                   component) != gExcludeLogComponents.end();
+}
+
+void trimInPlace(std::string *value) {
+  while (!value->empty() &&
+         (value->back() == ' ' || value->back() == '\t' ||
+          value->back() == '\r')) {
+    value->pop_back();
+  }
+}
+
+bool parseTaggedInt(const std::string &line, const char *tag, int32_t *out) {
+  const size_t pos = line.find(tag);
+  if (pos == std::string::npos) {
+    return false;
+  }
+  const char *start = line.c_str() + pos + std::strlen(tag);
+  char *end = nullptr;
+  const long value = std::strtol(start, &end, 10);
+  if (end == start) {
+    return false;
+  }
+  *out = static_cast<int32_t>(value);
+  return true;
+}
+
+void noteFirmwareUi(const std::string &line) {
+  static const char kEnter[] = "Entering activity: ";
+  const size_t enter = line.find(kEnter);
+  if (enter != std::string::npos) {
+    std::string name = line.substr(enter + sizeof(kEnter) - 1);
+    trimInPlace(&name);
+    std::lock_guard<std::mutex> lock(gUiStateMu);
+    gActivity = std::move(name);
+  }
+  if (line.find("Progress saved:") != std::string::npos) {
+    int32_t spine = 0;
+    int32_t page = 0;
+    const bool have_spine = parseTaggedInt(line, "spine=", &spine);
+    const bool have_page = parseTaggedInt(line, "page=", &page);
+    if (have_spine || have_page) {
+      std::lock_guard<std::mutex> lock(gUiStateMu);
+      if (have_spine) {
+        gReaderSpine = spine;
+      }
+      if (have_page) {
+        gReaderPage = page;
+      }
+    }
+  }
+}
+
+std::string currentActivity() {
+  std::lock_guard<std::mutex> lock(gUiStateMu);
+  return gActivity;
+}
+
+void copyUiState(Heartbeat *hb) {
+  std::lock_guard<std::mutex> lock(gUiStateMu);
+  hb->set_activity(gActivity);
+  hb->set_reader_spine(gReaderSpine);
+  hb->set_reader_page(gReaderPage);
+}
+
+void applyCoordinateSpace(CoordinateSpace space, uint32_t *x, uint32_t *y) {
+  if (space == CoordinateSpace::COORDINATE_SPACE_LOGICAL) {
+    uint32_t px = 0;
+    uint32_t py = 0;
+    simLogicalToPanel(*x, *y, &px, &py);
+    *x = px;
+    *y = py;
+  }
+  *x = clampPanelX(*x);
+  *y = clampPanelY(*y);
+}
+
+void enqueueUiResult(uint64_t corr, bool painted) {
+  UiResult result;
+  result.set_painted(painted);
+  result.set_generation(gFrameGen.load());
+  result.set_activity(currentActivity());
+  SimToServer msg;
+  msg.set_seq(gSeq.fetch_add(1));
+  msg.set_corr(corr);
+  msg.mutable_ui_result()->Swap(&result);
+  enqueue(std::move(msg), true);
+}
+
+void armUiResult(uint64_t corr) {
+  if (corr == 0) {
+    return;
+  }
+  PendingUiResult pending;
+  pending.corr = corr;
+  pending.start_gen = gFrameGen.load();
+  pending.deadline = std::chrono::steady_clock::now() + kUiResultMiss;
+  std::lock_guard<std::mutex> lock(gUiResultMu);
+  gPendingUi.push_back(pending);
+}
+
+void flushUiResults() {
+  std::vector<std::pair<uint64_t, bool>> done;
+  {
+    std::lock_guard<std::mutex> lock(gUiResultMu);
+    const auto now = std::chrono::steady_clock::now();
+    const uint64_t gen = gFrameGen.load();
+    auto it = gPendingUi.begin();
+    while (it != gPendingUi.end()) {
+      if (gen > it->start_gen) {
+        done.emplace_back(it->corr, true);
+        it = gPendingUi.erase(it);
+      } else if (now >= it->deadline) {
+        done.emplace_back(it->corr, false);
+        it = gPendingUi.erase(it);
+      } else {
+        ++it;
+      }
+    }
+  }
+  for (const auto &item : done) {
+    enqueueUiResult(item.first, item.second);
+  }
+}
+
+void ackAndMaybeArmUi(const ServerToSim &inbound, bool accepted,
+                      const char *reason) {
+  maybeAck(inbound, accepted, reason);
+  if (accepted && inbound.ack_requested()) {
+    armUiResult(inbound.corr());
+  }
 }
 
 void setGoodbyeReason(const char *reason) {
@@ -308,6 +473,8 @@ SimToServer makeHeartbeat() {
   hb.set_framebuffer_generation(gFrameGen.load());
   hb.set_inject_enabled(gInjectEnabled.load());
   hb.set_headless(gHeadless.load());
+  hb.set_orientation(simUiOrientation());
+  copyUiState(&hb);
   SimToServer msg;
   msg.set_seq(gSeq.fetch_add(1));
   msg.mutable_heartbeat()->Swap(&hb);
@@ -368,8 +535,9 @@ void handleTouch(const ServerToSim &inbound) {
     return;
   }
   const auto &touch = inbound.inject_touch();
-  const uint32_t x = clampPanelX(touch.x());
-  const uint32_t y = clampPanelY(touch.y());
+  uint32_t x = touch.x();
+  uint32_t y = touch.y();
+  applyCoordinateSpace(touch.coordinate_space(), &x, &y);
   std::vector<RemoteEvent> events;
   switch (touch.kind()) {
   case 0:
@@ -393,7 +561,7 @@ void handleTouch(const ServerToSim &inbound) {
     maybeAck(inbound, false, "queue_full");
     return;
   }
-  maybeAck(inbound, true, "");
+  ackAndMaybeArmUi(inbound, true, "");
 }
 
 void handleKey(const ServerToSim &inbound) {
@@ -423,7 +591,7 @@ void handleKey(const ServerToSim &inbound) {
     maybeAck(inbound, false, "queue_full");
     return;
   }
-  maybeAck(inbound, true, "");
+  ackAndMaybeArmUi(inbound, true, "");
 }
 
 void handleHome(const ServerToSim &inbound) {
@@ -445,7 +613,7 @@ void handleHome(const ServerToSim &inbound) {
     maybeAck(inbound, false, "queue_full");
     return;
   }
-  maybeAck(inbound, true, "");
+  ackAndMaybeArmUi(inbound, true, "");
 }
 
 void handleSwipe(const ServerToSim &inbound) {
@@ -458,10 +626,12 @@ void handleSwipe(const ServerToSim &inbound) {
     return;
   }
   const auto &swipe = inbound.inject_swipe();
-  const uint32_t x1 = clampPanelX(swipe.start_x());
-  const uint32_t y1 = clampPanelY(swipe.start_y());
-  const uint32_t x2 = clampPanelX(swipe.end_x());
-  const uint32_t y2 = clampPanelY(swipe.end_y());
+  uint32_t x1 = swipe.start_x();
+  uint32_t y1 = swipe.start_y();
+  uint32_t x2 = swipe.end_x();
+  uint32_t y2 = swipe.end_y();
+  applyCoordinateSpace(swipe.coordinate_space(), &x1, &y1);
+  applyCoordinateSpace(swipe.coordinate_space(), &x2, &y2);
   const unsigned long duration =
       swipe.duration_ms() == 0 ? kDefaultSwipeMs : swipe.duration_ms();
   const unsigned steps = std::max(2u, static_cast<unsigned>(duration / 16));
@@ -490,7 +660,7 @@ void handleSwipe(const ServerToSim &inbound) {
     maybeAck(inbound, false, "queue_full");
     return;
   }
-  maybeAck(inbound, true, "");
+  ackAndMaybeArmUi(inbound, true, "");
 }
 
 void handleInbound(const ServerToSim &inbound) {
@@ -521,6 +691,8 @@ void handleInbound(const ServerToSim &inbound) {
     break;
   case ServerToSim::kSetSessionView:
     setReadMask(inbound.set_session_view().read_mask().paths());
+    setExcludeLogComponents(
+        inbound.set_session_view().exclude_log_components());
     maybeAck(inbound, true, "");
     break;
   case ServerToSim::PAYLOAD_NOT_SET:
@@ -623,14 +795,22 @@ std::string firmwareLineComponent(const std::string &line) {
 }
 
 void emitFirmwareLine(const std::string &line) {
-  if (!gStarted.load() || line.empty() || !shouldEmit("log")) {
+  if (!gStarted.load() || line.empty()) {
+    return;
+  }
+  noteFirmwareUi(line);
+  if (!shouldEmit("log")) {
+    return;
+  }
+  const std::string component = firmwareLineComponent(line);
+  if (logComponentExcluded(component)) {
     return;
   }
   LogLine log;
   log.set_seq(gLogSeq.fetch_add(1));
   log.set_type(LogType::LOG_TYPE_FIRMWARE_SERIAL);
   log.set_severity(firmwareLineSeverity(line));
-  log.set_component(firmwareLineComponent(line));
+  log.set_component(component);
   log.set_text(line);
   SimToServer msg;
   msg.set_seq(gSeq.fetch_add(1));
@@ -696,6 +876,7 @@ void runSession(const Options &opts) {
   bool sent_register = false;
   while (!gStop.load()) {
     flushCapturedSnapshot();
+    flushUiResults();
     SimToServer outbound;
     if (dequeue(&outbound)) {
       if (!stream->Write(outbound)) {
@@ -916,6 +1097,9 @@ void teeFirmwareBytes(const uint8_t *data, size_t size) {
 
 void emitLog(int type, int severity, const char *component, const char *text) {
   if (!gStarted.load() || !shouldEmit("log")) {
+    return;
+  }
+  if (component && logComponentExcluded(component)) {
     return;
   }
   LogLine log;

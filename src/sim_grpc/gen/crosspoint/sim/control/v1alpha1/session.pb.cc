@@ -54,12 +54,12 @@ constexpr SimToServer::ParseTableT_ SimToServer::InternalGenerateParseTable_(con
     {
       PROTOBUF_FIELD_OFFSET(SimToServer, _impl_._has_bits_),
       0, // no _extensions_
-      17, 8,  // max_field_number, fast_idx_mask
+      18, 8,  // max_field_number, fast_idx_mask
       offsetof(ParseTableT_, field_lookup_table),
-      4294836732,  // skipmap
+      4294705660,  // skipmap
       offsetof(ParseTableT_, field_entries),
-      10,  // num_field_entries
-      8,  // num_aux_entries
+      11,  // num_field_entries
+      9,  // num_aux_entries
       offsetof(ParseTableT_, aux_entries),
       class_data,
       nullptr,  // post_loop_handler
@@ -99,6 +99,8 @@ constexpr SimToServer::ParseTableT_ SimToServer::InternalGenerateParseTable_(con
       {PROTOBUF_FIELD_OFFSET(SimToServer, _impl_.payload_.input_observed_), _Internal::kOneofCaseOffset + 0, 6, (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
       // .crosspoint.sim.control.v1alpha1.Goodbye goodbye = 17 [json_name = "goodbye"];
       {PROTOBUF_FIELD_OFFSET(SimToServer, _impl_.payload_.goodbye_), _Internal::kOneofCaseOffset + 0, 7, (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
+      // .crosspoint.sim.control.v1alpha1.UiResult ui_result = 18 [json_name = "uiResult"];
+      {PROTOBUF_FIELD_OFFSET(SimToServer, _impl_.payload_.ui_result_), _Internal::kOneofCaseOffset + 0, 8, (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
     }},
     {{
         #ifndef PROTOBUF_MESSAGE_GLOBALS
@@ -140,6 +142,11 @@ constexpr SimToServer::ParseTableT_ SimToServer::InternalGenerateParseTable_(con
         {::_pbi::TcParser::GetTable<::crosspoint::sim::control::v1alpha1::Goodbye>()},
         #else
         {::_pbi::FieldAuxMessageGlobals(), &::crosspoint::sim::control::v1alpha1::Goodbye_globals_},
+        #endif
+        #ifndef PROTOBUF_MESSAGE_GLOBALS
+        {::_pbi::TcParser::GetTable<::crosspoint::sim::control::v1alpha1::UiResult>()},
+        #else
+        {::_pbi::FieldAuxMessageGlobals(), &::crosspoint::sim::control::v1alpha1::UiResult_globals_},
         #endif
     }},
     {{
@@ -472,7 +479,7 @@ const ::uint32_t
         0x085, // bitmap
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::SimToServer, _impl_._has_bits_),
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::SimToServer, _impl_._oneof_case_[0]),
-        15, // hasbit index offset
+        16, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::SimToServer, _impl_.seq_),
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::SimToServer, _impl_.corr_),
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::SimToServer, _impl_.payload_),
@@ -484,8 +491,10 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::SimToServer, _impl_.payload_),
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::SimToServer, _impl_.payload_),
         PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::SimToServer, _impl_.payload_),
+        PROTOBUF_FIELD_OFFSET(::crosspoint::sim::control::v1alpha1::SimToServer, _impl_.payload_),
         0,
         1,
+        ~0u,
         ~0u,
         ~0u,
         ~0u,
@@ -524,7 +533,7 @@ const ::uint32_t
 static const ::_pbi::MigrationSchema
     schemas[] ABSL_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
         {0, sizeof(::crosspoint::sim::control::v1alpha1::SimToServer)},
-        {25, sizeof(::crosspoint::sim::control::v1alpha1::ServerToSim)},
+        {27, sizeof(::crosspoint::sim::control::v1alpha1::ServerToSim)},
 };
 static const ::_pbi::MessageGlobalsBase* PROTOBUF_NONNULL const
     file_message_globals[] = {
@@ -536,7 +545,7 @@ const char descriptor_table_protodef_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fses
     "\n-crosspoint/sim/control/v1alpha1/sessio"
     "n.proto\022\037crosspoint.sim.control.v1alpha1"
     "\0327crosspoint/sim/control/v1alpha1/simula"
-    "tor_control.proto\"\241\005\n\013SimToServer\022\020\n\003seq"
+    "tor_control.proto\"\353\005\n\013SimToServer\022\020\n\003seq"
     "\030\001 \001(\004R\003seq\022\022\n\004corr\030\002 \001(\004R\004corr\022G\n\010regis"
     "ter\030\n \001(\0132).crosspoint.sim.control.v1alp"
     "ha1.RegisterH\000R\010register\022J\n\theartbeat\030\013 "
@@ -553,30 +562,32 @@ const char descriptor_table_protodef_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fses
     ".sim.control.v1alpha1.InputObservedH\000R\ri"
     "nputObserved\022D\n\007goodbye\030\021 \001(\0132(.crosspoi"
     "nt.sim.control.v1alpha1.GoodbyeH\000R\007goodb"
-    "yeB\t\n\007payload\"\203\006\n\013ServerToSim\022\022\n\004corr\030\001 "
-    "\001(\004R\004corr\022#\n\rack_requested\030\002 \001(\010R\014ackReq"
-    "uested\022Q\n\014inject_touch\030\n \001(\0132,.crosspoin"
-    "t.sim.control.v1alpha1.InjectTouchH\000R\013in"
-    "jectTouch\022K\n\ninject_key\030\013 \001(\0132*.crosspoi"
-    "nt.sim.control.v1alpha1.InjectKeyH\000R\tinj"
-    "ectKey\022N\n\013inject_home\030\014 \001(\0132+.crosspoint"
-    ".sim.control.v1alpha1.InjectHomeH\000R\ninje"
-    "ctHome\022Q\n\014inject_swipe\030\r \001(\0132,.crosspoin"
-    "t.sim.control.v1alpha1.InjectSwipeH\000R\013in"
-    "jectSwipe\022]\n\020snapshot_request\030\016 \001(\01320.cr"
-    "osspoint.sim.control.v1alpha1.SnapshotRe"
-    "questH\000R\017snapshotRequest\022a\n\022set_inject_e"
-    "nabled\030\017 \001(\01321.crosspoint.sim.control.v1"
-    "alpha1.SetInjectEnabledH\000R\020setInjectEnab"
-    "led\022N\n\010shutdown\030\020 \001(\01320.crosspoint.sim.c"
-    "ontrol.v1alpha1.ShutdownRequestH\000R\010shutd"
-    "own\022[\n\020set_session_view\030\021 \001(\0132/.crosspoi"
-    "nt.sim.control.v1alpha1.SetSessionViewH\000"
-    "R\016setSessionViewB\t\n\007payload2\204\001\n\027Simulato"
-    "rControlService\022i\n\007Session\022,.crosspoint."
-    "sim.control.v1alpha1.SimToServer\032,.cross"
-    "point.sim.control.v1alpha1.ServerToSim(\001"
-    "0\001b\006proto3"
+    "ye\022H\n\tui_result\030\022 \001(\0132).crosspoint.sim.c"
+    "ontrol.v1alpha1.UiResultH\000R\010uiResultB\t\n\007"
+    "payload\"\203\006\n\013ServerToSim\022\022\n\004corr\030\001 \001(\004R\004c"
+    "orr\022#\n\rack_requested\030\002 \001(\010R\014ackRequested"
+    "\022Q\n\014inject_touch\030\n \001(\0132,.crosspoint.sim."
+    "control.v1alpha1.InjectTouchH\000R\013injectTo"
+    "uch\022K\n\ninject_key\030\013 \001(\0132*.crosspoint.sim"
+    ".control.v1alpha1.InjectKeyH\000R\tinjectKey"
+    "\022N\n\013inject_home\030\014 \001(\0132+.crosspoint.sim.c"
+    "ontrol.v1alpha1.InjectHomeH\000R\ninjectHome"
+    "\022Q\n\014inject_swipe\030\r \001(\0132,.crosspoint.sim."
+    "control.v1alpha1.InjectSwipeH\000R\013injectSw"
+    "ipe\022]\n\020snapshot_request\030\016 \001(\01320.crosspoi"
+    "nt.sim.control.v1alpha1.SnapshotRequestH"
+    "\000R\017snapshotRequest\022a\n\022set_inject_enabled"
+    "\030\017 \001(\01321.crosspoint.sim.control.v1alpha1"
+    ".SetInjectEnabledH\000R\020setInjectEnabled\022N\n"
+    "\010shutdown\030\020 \001(\01320.crosspoint.sim.control"
+    ".v1alpha1.ShutdownRequestH\000R\010shutdown\022[\n"
+    "\020set_session_view\030\021 \001(\0132/.crosspoint.sim"
+    ".control.v1alpha1.SetSessionViewH\000R\016setS"
+    "essionViewB\t\n\007payload2\204\001\n\027SimulatorContr"
+    "olService\022i\n\007Session\022,.crosspoint.sim.co"
+    "ntrol.v1alpha1.SimToServer\032,.crosspoint."
+    "sim.control.v1alpha1.ServerToSim(\0010\001b\006pr"
+    "oto3"
 };
 static const ::_pbi::DescriptorTable* PROTOBUF_NONNULL const
     descriptor_table_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsession_2eproto_deps[1] = {
@@ -586,7 +597,7 @@ static ::absl::once_flag descriptor_table_crosspoint_2fsim_2fcontrol_2fv1alpha1_
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsession_2eproto = {
     false,
     false,
-    1730,
+    1804,
     descriptor_table_protodef_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsession_2eproto,
     "crosspoint/sim/control/v1alpha1/session.proto",
     &descriptor_table_crosspoint_2fsim_2fcontrol_2fv1alpha1_2fsession_2eproto_once,
@@ -797,6 +808,30 @@ void SimToServer::clear_goodbye() {
     clear_has_payload();
   }
 }
+void SimToServer::set_allocated_ui_result(::crosspoint::sim::control::v1alpha1::UiResult* PROTOBUF_NULLABLE ui_result) {
+  ::google::protobuf::Arena* message_arena = GetArena();
+  clear_payload();
+  if (ui_result) {
+    ::google::protobuf::Arena* submessage_arena = reinterpret_cast<::google::protobuf::Message*>(ui_result)->GetArena();
+    if (message_arena != submessage_arena) {
+      ui_result = ::google::protobuf::internal::GetOwnedMessage(message_arena, ui_result, submessage_arena);
+    }
+    set_has_ui_result();
+    _impl_.payload_.ui_result_ = ui_result;
+  }
+  // @@protoc_insertion_point(field_set_allocated:crosspoint.sim.control.v1alpha1.SimToServer.ui_result)
+}
+void SimToServer::clear_ui_result() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (payload_case() == kUiResult) {
+    if (GetArena() == nullptr) {
+      delete _impl_.payload_.ui_result_;
+    } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
+      ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.payload_.ui_result_);
+    }
+    clear_has_payload();
+  }
+}
 SimToServer::SimToServer(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
     : ::google::protobuf::Message(arena, SimToServer_get_class_data()) {
@@ -862,6 +897,9 @@ SimToServer::SimToServer(
         break;
       case kGoodbye:
         _impl_.payload_.goodbye_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.payload_.goodbye_);
+        break;
+      case kUiResult:
+        _impl_.payload_.ui_result_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.payload_.ui_result_);
         break;
   }
 
@@ -965,6 +1003,14 @@ void SimToServer::clear_payload() {
         delete _impl_.payload_.goodbye_;
       } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
         ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.payload_.goodbye_);
+      }
+      break;
+    }
+    case kUiResult: {
+      if (GetArena() == nullptr) {
+        delete _impl_.payload_.ui_result_;
+      } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
+        ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.payload_.ui_result_);
       }
       break;
     }
@@ -1106,6 +1152,12 @@ PROTOBUF_NOINLINE void SimToServer::Clear() {
           stream);
       break;
     }
+    case kUiResult: {
+      target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+          18, *this_._impl_.payload_.ui_result_, this_._impl_.payload_.ui_result_->GetCachedSize(), target,
+          stream);
+      break;
+    }
     default:
       break;
   }
@@ -1197,6 +1249,12 @@ PROTOBUF_NOINLINE void SimToServer::Clear() {
     case kGoodbye: {
       total_size += 2 +
                     ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.payload_.goodbye_);
+      break;
+    }
+    // .crosspoint.sim.control.v1alpha1.UiResult ui_result = 18 [json_name = "uiResult"];
+    case kUiResult: {
+      total_size += 2 +
+                    ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.payload_.ui_result_);
       break;
     }
     case PAYLOAD_NOT_SET: {
@@ -1307,6 +1365,14 @@ void SimToServer::MergeImpl(::google::protobuf::MessageLite& to_msg,
           _this->_impl_.payload_.goodbye_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.payload_.goodbye_);
         } else {
           _this->_impl_.payload_.goodbye_->MergeFrom(*from._impl_.payload_.goodbye_);
+        }
+        break;
+      }
+      case kUiResult: {
+        if (oneof_needs_init) {
+          _this->_impl_.payload_.ui_result_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.payload_.ui_result_);
+        } else {
+          _this->_impl_.payload_.ui_result_->MergeFrom(*from._impl_.payload_.ui_result_);
         }
         break;
       }

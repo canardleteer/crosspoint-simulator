@@ -82,6 +82,12 @@ void finishSnapshotError(uint64_t corr, const char *message);
 void teeFirmwareBytes(const uint8_t *data, size_t size);
 void emitLog(int type, int severity, const char *component, const char *text);
 
+// Logical (firmware) pixels to current panel pixels. Implemented in HalGPIO.cpp.
+void simLogicalToPanel(uint32_t logical_x, uint32_t logical_y, uint32_t *panel_x,
+                       uint32_t *panel_y);
+// GfxRenderer orientation as uint32 (Heartbeat.orientation).
+uint32_t simUiOrientation();
+
 // Proto LogType / LogSeverity values so HAL helpers need not include pb.h.
 constexpr int kLogTypeHostSim = 2;
 constexpr int kLogSeverityDebug = 1;

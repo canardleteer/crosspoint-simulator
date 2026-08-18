@@ -158,6 +158,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SimToServer final : public ::google
     kInputAck = 15,
     kInputObserved = 16,
     kGoodbye = 17,
+    kUiResult = 18,
     PAYLOAD_NOT_SET = 0,
   };
   static constexpr int kIndexInFileMessages = 0;
@@ -262,6 +263,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SimToServer final : public ::google
     kInputAckFieldNumber = 15,
     kInputObservedFieldNumber = 16,
     kGoodbyeFieldNumber = 17,
+    kUiResultFieldNumber = 18,
   };
   // uint64 seq = 1 [json_name = "seq"];
   void clear_seq() ;
@@ -443,6 +445,26 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SimToServer final : public ::google
   ::crosspoint::sim::control::v1alpha1::Goodbye* PROTOBUF_NONNULL _internal_mutable_goodbye();
 
   public:
+  // .crosspoint.sim.control.v1alpha1.UiResult ui_result = 18 [json_name = "uiResult"];
+  [[nodiscard]] bool has_ui_result()
+      const;
+  private:
+  bool _internal_has_ui_result() const;
+
+  public:
+  void clear_ui_result() ;
+  [[nodiscard]] const ::crosspoint::sim::control::v1alpha1::UiResult& ui_result() const;
+  [[nodiscard]] ::crosspoint::sim::control::v1alpha1::UiResult* PROTOBUF_NULLABLE release_ui_result();
+  ::crosspoint::sim::control::v1alpha1::UiResult* PROTOBUF_NONNULL mutable_ui_result();
+  void set_allocated_ui_result(::crosspoint::sim::control::v1alpha1::UiResult* PROTOBUF_NULLABLE value);
+  void unsafe_arena_set_allocated_ui_result(::crosspoint::sim::control::v1alpha1::UiResult* PROTOBUF_NULLABLE value);
+  ::crosspoint::sim::control::v1alpha1::UiResult* PROTOBUF_NULLABLE unsafe_arena_release_ui_result();
+
+  private:
+  const ::crosspoint::sim::control::v1alpha1::UiResult& _internal_ui_result() const;
+  ::crosspoint::sim::control::v1alpha1::UiResult* PROTOBUF_NONNULL _internal_mutable_ui_result();
+
+  public:
   void clear_payload();
   PayloadCase payload_case() const;
   // @@protoc_insertion_point(class_scope:crosspoint.sim.control.v1alpha1.SimToServer)
@@ -456,11 +478,12 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SimToServer final : public ::google
   void set_has_input_ack();
   void set_has_input_observed();
   void set_has_goodbye();
+  void set_has_ui_result();
   [[nodiscard]] inline bool has_payload() const;
   inline void clear_has_payload();
   using ParseTableT_ =
-      ::google::protobuf::internal::TcParseTable<1, 10,
-                          8, 0,
+      ::google::protobuf::internal::TcParseTable<1, 11,
+                          9, 0,
                           2>;
   static constexpr ParseTableT_ InternalGenerateParseTable_(
       const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL class_data);
@@ -501,6 +524,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SimToServer final : public ::google
       ::google::protobuf::Message* PROTOBUF_NULLABLE input_ack_;
       ::google::protobuf::Message* PROTOBUF_NULLABLE input_observed_;
       ::google::protobuf::Message* PROTOBUF_NULLABLE goodbye_;
+      ::google::protobuf::Message* PROTOBUF_NULLABLE ui_result_;
     } payload_;
     ::uint32_t _oneof_case_[1];
     PROTOBUF_TSAN_DECLARE_MEMBER
@@ -1555,6 +1579,77 @@ inline ::crosspoint::sim::control::v1alpha1::Goodbye* PROTOBUF_NONNULL SimToServ
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
   ::crosspoint::sim::control::v1alpha1::Goodbye* _msg = _internal_mutable_goodbye();
   // @@protoc_insertion_point(field_mutable:crosspoint.sim.control.v1alpha1.SimToServer.goodbye)
+  return _msg;
+}
+
+// .crosspoint.sim.control.v1alpha1.UiResult ui_result = 18 [json_name = "uiResult"];
+inline bool SimToServer::has_ui_result() const {
+  return payload_case() == kUiResult;
+}
+inline bool SimToServer::_internal_has_ui_result() const {
+  return payload_case() == kUiResult;
+}
+inline void SimToServer::set_has_ui_result() {
+  _impl_._oneof_case_[0] = kUiResult;
+}
+inline ::crosspoint::sim::control::v1alpha1::UiResult* PROTOBUF_NULLABLE SimToServer::release_ui_result() {
+  // @@protoc_insertion_point(field_release:crosspoint.sim.control.v1alpha1.SimToServer.ui_result)
+  if (payload_case() == kUiResult) {
+    clear_has_payload();
+    auto* temp = reinterpret_cast<::crosspoint::sim::control::v1alpha1::UiResult*>(_impl_.payload_.ui_result_);
+    if (GetArena() != nullptr) {
+      temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.payload_.ui_result_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::crosspoint::sim::control::v1alpha1::UiResult& SimToServer::_internal_ui_result() const {
+  return payload_case() == kUiResult ? static_cast<const ::crosspoint::sim::control::v1alpha1::UiResult&>(*reinterpret_cast<::crosspoint::sim::control::v1alpha1::UiResult*>(_impl_.payload_.ui_result_))
+                     : *::google::protobuf::internal::MessageGlobalsBase::ToDefaultInstance<::crosspoint::sim::control::v1alpha1::UiResult>(&::crosspoint::sim::control::v1alpha1::UiResult_globals_);
+}
+inline const ::crosspoint::sim::control::v1alpha1::UiResult& SimToServer::ui_result() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:crosspoint.sim.control.v1alpha1.SimToServer.ui_result)
+  return _internal_ui_result();
+}
+inline ::crosspoint::sim::control::v1alpha1::UiResult* PROTOBUF_NULLABLE SimToServer::unsafe_arena_release_ui_result() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:crosspoint.sim.control.v1alpha1.SimToServer.ui_result)
+  if (payload_case() == kUiResult) {
+    clear_has_payload();
+    auto* temp = reinterpret_cast<::crosspoint::sim::control::v1alpha1::UiResult*>(_impl_.payload_.ui_result_);
+    _impl_.payload_.ui_result_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void SimToServer::unsafe_arena_set_allocated_ui_result(
+    ::crosspoint::sim::control::v1alpha1::UiResult* PROTOBUF_NULLABLE value) {
+  // We rely on the oneof clear method to free the earlier contents
+  // of this oneof. We can directly use the pointer we're given to
+  // set the new value.
+  clear_payload();
+  if (value) {
+    set_has_ui_result();
+    _impl_.payload_.ui_result_ = reinterpret_cast<::google::protobuf::Message*>(value);
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:crosspoint.sim.control.v1alpha1.SimToServer.ui_result)
+}
+inline ::crosspoint::sim::control::v1alpha1::UiResult* PROTOBUF_NONNULL SimToServer::_internal_mutable_ui_result() {
+  if (payload_case() != kUiResult) {
+    clear_payload();
+    set_has_ui_result();
+    _impl_.payload_.ui_result_ = reinterpret_cast<::google::protobuf::Message*>(
+        ::google::protobuf::Message::DefaultConstruct<::crosspoint::sim::control::v1alpha1::UiResult>(GetArena()));
+  }
+  return reinterpret_cast<::crosspoint::sim::control::v1alpha1::UiResult*>(_impl_.payload_.ui_result_);
+}
+inline ::crosspoint::sim::control::v1alpha1::UiResult* PROTOBUF_NONNULL SimToServer::mutable_ui_result()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::crosspoint::sim::control::v1alpha1::UiResult* _msg = _internal_mutable_ui_result();
+  // @@protoc_insertion_point(field_mutable:crosspoint.sim.control.v1alpha1.SimToServer.ui_result)
   return _msg;
 }
 

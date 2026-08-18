@@ -531,6 +531,52 @@ uint8_t mouseChordContactId() {
 
 } // namespace
 
+#ifdef CROSSPOINT_SIM_GRPC
+namespace SimGrpc {
+
+void simLogicalToPanel(uint32_t logical_x, uint32_t logical_y, uint32_t *panel_x,
+                       uint32_t *panel_y) {
+  if (!panel_x || !panel_y) {
+    return;
+  }
+  const int logicalWidth = std::max(1, renderer.getScreenWidth());
+  const int logicalHeight = std::max(1, renderer.getScreenHeight());
+  const int lx = std::min(static_cast<int>(logical_x), logicalWidth - 1);
+  const int ly = std::min(static_cast<int>(logical_y), logicalHeight - 1);
+  const int pw = std::max(1, static_cast<int>(BoardConfig::ACTIVE.displayWidth));
+  const int ph = std::max(1, static_cast<int>(BoardConfig::ACTIVE.displayHeight));
+  int physicalX = 0;
+  int physicalY = 0;
+  switch (renderer.getOrientation()) {
+  case GfxRenderer::Portrait:
+    physicalX = ly;
+    physicalY = ph - 1 - lx;
+    break;
+  case GfxRenderer::PortraitInverted:
+    physicalX = pw - 1 - ly;
+    physicalY = lx;
+    break;
+  case GfxRenderer::LandscapeClockwise:
+    physicalX = pw - 1 - lx;
+    physicalY = ph - 1 - ly;
+    break;
+  case GfxRenderer::LandscapeCounterClockwise:
+  default:
+    physicalX = lx;
+    physicalY = ly;
+    break;
+  }
+  *panel_x = static_cast<uint32_t>(std::max(0, physicalX));
+  *panel_y = static_cast<uint32_t>(std::max(0, physicalY));
+}
+
+uint32_t simUiOrientation() {
+  return static_cast<uint32_t>(renderer.getOrientation());
+}
+
+} // namespace SimGrpc
+#endif
+
 static int scancodeToButton(SDL_Scancode sc) {
   for (int i = 0; i < NUM_BUTTONS; i++) {
     if (buttonScancode[i] == sc)
